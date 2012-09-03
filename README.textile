@@ -1,7 +1,7 @@
-.h1 generate domain weights
+h1. generate domain weights
 
 Lin, Kui, Zhu and Zhang developed a similarity measure for protein domain architectures. This is based on precomputed 'domain weights'. The 'generate_domain_weights' tool computes the domain weights of all InterPro annotations in UniprotKB in parallel using R and redis. 
 
-.h2 References
+h2. References
 
 Lin, Kui, Lei Zhu, and Da-Yong Zhang. “An Initial Strategy for Comparing Proteins at the Domain Architecture Level.” Bioinformatics 22, no. 17 (September 1, 2006): 2081–2086. 
