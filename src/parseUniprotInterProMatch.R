@@ -11,6 +11,10 @@ uniprotInterProMatchUrl <- function(accession) {
     )
 }
 
+downloadXmlDoc <- function(uniprot.url, noverbose=T) {
+  try(xmlInternalTreeParse(uniprot.url), silent=noverbose)
+}
+
 iprDomCount <- function(ipr.id) {
   redis.id <- paste(ipr.id, '_cnt', sep='')
   if (is.null(redisGet(redis.id)))
@@ -24,8 +28,29 @@ iprDomVersatility <- function(ipr.id, neighbor.domain.id) {
   redisSAdd(redis.id, neighbor.domain.id)
 }
 
-parseEntry <- function(ipr.match.url) {
+getProtein <- function(xml.doc) {
+  getNodeSet(xml.doc, "//protein")[[1]]
+}
 
+getIprScnMatches <- function(prot.node) {
+  sapply(getNodeSet(prot.node, "//ipr[@type='Domain']"),
+    xmlParent)
+}
+
+interProAnnotation <- function(match.node) {
+  ipa <- list(id=xmlGetAttr(
+      getNodeSet(match.node, "ipr")[[1]],
+      "id"))
+  lcn <- getNodeSet(match.node, "lcn")[[1]]
+  ipa['start'] <- xmlGetAttr(lcn, 'start')
+  ipa['end'] <- xmlGetAttr(lcn, 'end')
+  # return
+  ipa
+}
+
+parseEntry <- function(xml.doc) {
+  sapply(getIprScnMatches(getProtein(xml.doc)),
+    interProAnnotation)
 }
 
 
