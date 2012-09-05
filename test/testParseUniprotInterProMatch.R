@@ -37,7 +37,13 @@ rslt <- downloadXmlDoc("http://non.existing.url")
 checkTrue(identical(class(rslt), 'try-error'))
 
 # Downloaded test document to perform following tests
-exmpl.doc <- xmlInternalTreeParse("test/downloaded_iprmatch_A0A000.xml")
+exmpl.doc <- xmlInternalTreeParse(
+  project.file.path( "test","downloaded_iprmatch_A0A000.xml" ))
+exmpl.doc.2 <- xmlInternalTreeParse(
+  project.file.path( "test","downloaded_iprmatch_Q6GZX4.xml" ))
+exmpl.doc.3 <- xmlInternalTreeParse(
+  project.file.path( "test","downloaded_iprmatch_J006900.xml" ))
+
 inter.pro.accessions <- c('IPR015421', 'IPR015422',
   'IPR004839', 'IPR015424', 'IPR010961')
 
@@ -82,9 +88,33 @@ checkEquals( class(ngbs.rslt), 'list')
 checkEquals( names(ngbs.rslt), c( 'start', 'end'))
 checkEquals(ngbs.rslt$start, NA)
 checkEquals(ngbs.rslt$end, NA)
+# IPR015424 contains IPR010961 
+ngbs.rslt <- neighbors(ipr.match.parsed, 'IPR010961')
+checkTrue( ! is.null(ngbs.rslt))
+checkEquals( class(ngbs.rslt), 'list')
+checkEquals( names(ngbs.rslt), c( 'start', 'end'))
+checkEquals(ngbs.rslt$start, 'IPR015424' )
+checkEquals(ngbs.rslt$end, 'IPR015424' )
+# Test just two domains in protein
+ngbs.rslt.2 <- neighbors( iprAnnotationPositionsMatrix(exmpl.doc.2),
+  'IPR000666' )
+checkTrue( ! is.null(ngbs.rslt.2) )
+checkEquals( class(ngbs.rslt.2), 'list' )
+checkEquals( names(ngbs.rslt.2), c('start', 'end') )
+checkEquals( ngbs.rslt.2$start, NA )
+checkEquals( ngbs.rslt.2$end, 'IPR015424' )
+# Test two domains with identical positions should result in multiple 'start'
+# neighbors
+ngbs.rslt.3 <- neighbors( iprAnnotationPositionsMatrix(exmpl.doc.3),
+  'IPR015424' )
+checkTrue( ! is.null(ngbs.rslt.3) )
+checkEquals( class(ngbs.rslt.3), 'list' )
+checkEquals( names(ngbs.rslt.3), c('start', 'end') )
+checkEquals( ngbs.rslt.3$start, c('IPR000666','IPR000999') )
+checkEquals( ngbs.rslt.3$end, NA )
 
 # Test parseUniprotIprMatchDocument
-print("Testing parseUniprotIprMatchDocument(...)")
+print( "Testing parseUniprotIprMatchDocument(...)" )
 parse.rslt <- parseUniprotIprMatchDocument(exmpl.doc)
 checkEquals( class(parse.rslt), 'matrix')
 checkEquals( nrow(parse.rslt), 5)
@@ -98,3 +128,11 @@ computeInterProDomainWeights(parse.rslt)
 checkEquals( redisSCard('ipr_accessions'), length(inter.pro.accessions) )
 checkEquals( redisGet('IPR015422_cnt'), '1' )
 checkEquals( redisSCard('IPR015422_nghbrs'), 2 )
+computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.2) )
+checkEquals( redisSCard('ipr_accessions'), length(inter.pro.accessions) + 1 )
+checkEquals( redisGet('IPR015424_cnt'), '2' )
+# And after computing another document, in which 'IPR015424' has TWO 'start'
+# neighbors and no 'end' neighbors:
+redisFlushAll()
+computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.3) )
+checkEquals( redisSCard('IPR015424_nghbrs'), 2 )

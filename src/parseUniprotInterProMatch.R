@@ -44,32 +44,46 @@ iprAnnotationPositionsMatrix <- function(xml.doc) {
 }
 
 neighbors <- function(position.matrix, row.name) {
-  m <- position.matrix[rownames(position.matrix) != row.name, ]
-  pos <- sort(c(m[,'start'], m[,'end']))
+  # Exclude the row named <row.name> from position.matrix
+  m <- position.matrix[rownames(position.matrix) != row.name, , drop=F ]
+  # Single rowed matrix of all 'start' and 'end' positions where colnames are
+  # the domain ids.
+  pos <- matrix( c( m[,'start'], m[,'end'] ), nrow=1, 
+    dimnames=list(c('pos'), c(rownames(m), rownames(m))) )
+  # Result is a list with start and end neighbor for domain <row.name>
   setNames(
     lapply(locations, function(location) {
-      diff.pos <- position.matrix[[ row.name, location ]] - pos
-      if (identical(location, 'end'))
-        diff.pos <- diff.pos * (-1)
-      indices <- which(diff.pos >= 0)
-      if ( length(indices) > 0 )
-        names(which(diff.pos == min(diff.pos[ indices ])))
-      else
-        NA
+      # Current position to measure distances to:
+      cp <- position.matrix[[ row.name, location ]]
+      # Measure distance for each postion from left to start or from end to
+      # right? The latter results in inversion of sign.
+      dir.fct <- if (identical(location, 'start')) 1 else (-1)
+      # Calculate distances:
+      diff.pos <- dir.fct * (cp - pos)
+      # Use only positive distances - look in the right direction, that is:
+      dists <- diff.pos[ , diff.pos[,] >= 0, drop=F ]
+      # Select those closest in the currently evaluated direction ( depends on
+      # <location> ). No such entries should be returned as 'NA', the matching
+      # domain ids otherwise.
+      if ( length(dists) > 0 ) colnames( dists[ , dists == min(dists), drop=F ] ) else NA
     }),
     locations)
 }
 
 parseUniprotIprMatchDocument <- function(xml.doc) {
   iapm <- iprAnnotationPositionsMatrix(xml.doc)
-  do.call('rbind', 
-    lapply( rownames(iapm), function(row.name) {
-        ngbs <- neighbors(iapm, row.name)
-        matrix( ngbs, nrow=1, 
-          dimnames=list(c(row.name), names(ngbs))
-          )
-      })
-    )
+  if ( nrow(iapm) == 1 ) {
+    matrix( c(NA, NA), nrow=1, dimnames=list(rownames(iapm), locations) )
+  } else {
+    do.call('rbind', 
+      lapply( rownames(iapm), function(row.name) {
+          ngbs <- neighbors(iapm, row.name)
+          matrix( ngbs, nrow=1, 
+            dimnames=list(c(row.name), names(ngbs))
+            )
+        })
+      )
+  }
 }
 
 iprDomAccessions <- function(ipr.id,
@@ -91,15 +105,23 @@ iprDomVersatility <- function(ipr.id, neighbor.domain.id) {
 }
 
 computeInterProDomainWeights <- function(ipr.domain.matrix) {
+  # Compute domain weights for all domains annotated in the currently processed
+  # document:
   lapply( rownames(ipr.domain.matrix), function(ipr.id) {
+      # Remember all distinct domain accessions for convenience
       iprDomAccessions(ipr.id)
+      # Count number of occurrences of current domain:
       iprDomCount(ipr.id)
+      # Count neighbors at both positions 'start' and 'end':
       lapply(locations, function(loc) {
-          ngb.id <- ipr.domain.matrix[[ipr.id, loc]]
-          if ( ! is.na(ngb.id) )
-            iprDomVersatility(ipr.id, ngb.id)
+          # Count each distinct neighbor domain found (there can be more than
+          # one at both the 'start' and 'end' positions):
+          lapply( ipr.domain.matrix[[ipr.id, loc]], function(ngb.id) {
+              if ( ! is.na(ngb.id) )
+                iprDomVersatility(ipr.id, ngb.id)
+              })
           })
       })
-  # return
+  # No error, so return:
   TRUE
 }
