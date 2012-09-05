@@ -63,7 +63,7 @@ neighbors <- function(position.matrix, row.name) {
       # Use only positive distances - look in the right direction, that is:
       dists <- diff.pos[ , diff.pos[,] >= 0, drop=F ]
       # Select those closest in the currently evaluated direction ( depends on
-      # <location> ). No such entries should be returned as 'NA', the matching
+      # <location> ). No entries should be returned as 'NA', the matching
       # domain ids otherwise.
       if ( length(dists) > 0 ) colnames( dists[ , dists == min(dists), drop=F ] ) else NA
     }),
@@ -72,17 +72,19 @@ neighbors <- function(position.matrix, row.name) {
 
 parseUniprotIprMatchDocument <- function(xml.doc) {
   iapm <- iprAnnotationPositionsMatrix(xml.doc)
-  if ( nrow(iapm) == 1 ) {
-    matrix( c(NA, NA), nrow=1, dimnames=list(rownames(iapm), locations) )
-  } else {
-    do.call('rbind', 
-      lapply( rownames(iapm), function(row.name) {
-          ngbs <- neighbors(iapm, row.name)
-          matrix( ngbs, nrow=1, 
-            dimnames=list(c(row.name), names(ngbs))
-            )
-        })
-      )
+  if ( ! is.null(iapm) ) {
+    if ( nrow(iapm) == 1 ) {
+      matrix( c(NA, NA), nrow=1, dimnames=list(rownames(iapm), locations) )
+    } else {
+      do.call('rbind', 
+        lapply( rownames(iapm), function(row.name) {
+            ngbs <- neighbors(iapm, row.name)
+            matrix( ngbs, nrow=1, 
+              dimnames=list(c(row.name), names(ngbs))
+              )
+          })
+        )
+    }
   }
 }
 
@@ -105,6 +107,7 @@ iprDomVersatility <- function(ipr.id, neighbor.domain.id) {
 }
 
 computeInterProDomainWeights <- function(ipr.domain.matrix) {
+  if ( ! is.null( ipr.domain.matrix ) ) {
   # Compute domain weights for all domains annotated in the currently processed
   # document:
   lapply( rownames(ipr.domain.matrix), function(ipr.id) {
@@ -122,6 +125,7 @@ computeInterProDomainWeights <- function(ipr.domain.matrix) {
               })
           })
       })
+  }
   # No error, so return:
   TRUE
 }

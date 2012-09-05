@@ -43,6 +43,10 @@ exmpl.doc.2 <- xmlInternalTreeParse(
   project.file.path( "test","downloaded_iprmatch_Q6GZX4.xml" ))
 exmpl.doc.3 <- xmlInternalTreeParse(
   project.file.path( "test","downloaded_iprmatch_J006900.xml" ))
+exmpl.doc.4 <- xmlInternalTreeParse(
+  project.file.path( "test","downloaded_iprmatch_J000000.xml" ))
+exmpl.doc.5 <- xmlInternalTreeParse(
+  project.file.path( "test","downloaded_iprmatch_J000001.xml" ))
 
 inter.pro.accessions <- c('IPR015421', 'IPR015422',
   'IPR004839', 'IPR015424', 'IPR010961')
@@ -136,3 +140,11 @@ checkEquals( redisGet('IPR015424_cnt'), '2' )
 redisFlushAll()
 computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.3) )
 checkEquals( redisSCard('IPR015424_nghbrs'), 2 )
+rks <- length( redisKeys() )
+# Document with no valid InterPro Domains:
+computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.4) )
+checkEquals( length( redisKeys() ), rks )
+# Document with only a single annotated InterPro Domain
+computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) )
+checkEquals( redisSCard('ipr_accessions'), 4 )
+checkEquals( redisSCard('IPR000001_nghbrs'), 0 )

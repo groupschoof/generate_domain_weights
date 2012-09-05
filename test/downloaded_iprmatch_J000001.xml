@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE interpromatch SYSTEM "http://srs.ebi.ac.uk/xml/interpro/match_complete.dtd">
+<interpromatch>
+  <release>
+    <dbinfo dbname="PANTHER" version="7.2" entry_count="71246" file_date="16-MAR-12"/>
+    <dbinfo dbname="PFAM" version="26.0" entry_count="13672" file_date="28-NOV-11"/>
+    <dbinfo dbname="PIRSF" version="2.80" entry_count="3059" file_date="23-APR-12"/>
+    <dbinfo dbname="PRINTS" version="41.1" entry_count="2050" file_date="12-AUG-10"/>
+    <dbinfo dbname="PRODOM" version="2006.1" entry_count="1894" file_date="23-APR-09"/>
+    <dbinfo dbname="PROSITE" version="20.80" entry_count="1308" file_date="18-FEB-12"/>
+    <dbinfo dbname="PROFILE" version="20.80" entry_count="1029" file_date="18-FEB-12"/>
+    <dbinfo dbname="SMART" version="6.2" entry_count="1008" file_date="24-OCT-11"/>
+    <dbinfo dbname="TIGRFAMs" version="10.1" entry_count="4023" file_date="19-JAN-11"/>
+    <dbinfo dbname="GENE3D" version="3.3.0" entry_count="2386" file_date="15-SEP-09"/>
+    <dbinfo dbname="SSF" version="1.73" entry_count="1774" file_date="01-NOV-07"/>
+    <dbinfo dbname="SWISSPROT" version="2012_05" entry_count="536029" file_date="16-MAY-12"/>
+    <dbinfo dbname="TREMBL" version="2012_05" entry_count="22128511" file_date="16-MAY-12"/>
+    <dbinfo dbname="INTERPRO" version="38.0" entry_count="23232" file_date="18-JUN-12"/>
+    <dbinfo dbname="GO" version="N/A" entry_count="23937" file_date="27-MAR-07"/>
+    <dbinfo dbname="MEROPS" version="9.3" entry_count="3830" file_date="14-DEC-10"/>
+    <dbinfo dbname="UniProt" version="2012_05" entry_count="22664540" file_date="16-MAY-12"/>
+    <dbinfo dbname="HAMAP" version="140911" entry_count="1702" file_date="14-SEP-11"/>
+    <dbinfo dbname="PFAMB" version="26.0" entry_count="20000" file_date="28-NOV-11"/>
+  </release>
+  <protein id="A0A000" name="A0A000_9ACTO" length="394" crc64="F1DD0C1042811B48">
+    <match id="G3DSA:3.40.640.10" name="PyrdxlP-dep_Trfase_major_sub1" dbname="GENE3D" status="T" evd="HMMPfam">
+      <ipr id="IPR015421" name="Pyridoxal phosphate-dependent transferase, major region, subdomain 1" type="Domain"/>
+      <lcn start="55" end="271" score="1.6000000000000194E-82"/>
+    </match>
+  </protein>
+</interpromatch>
