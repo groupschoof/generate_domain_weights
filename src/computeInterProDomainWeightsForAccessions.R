@@ -44,7 +44,7 @@ redis.port <- if ( length(trailing.args) == 3 ) {
 
 
 # Start computation in parallel
-mclapply( accessions, function(uniprot.acc) {
+rslt <- mclapply( accessions, function(uniprot.acc) {
     # Connect to redis
     try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
     if ( identical(class(try.res), 'try-error') )
@@ -60,4 +60,10 @@ mclapply( accessions, function(uniprot.acc) {
     else
       print( paste("URL", u, "did return an error") )
     
-    } )
+    # Clean up, boy:
+    redisClose()
+
+    }, mc.preschedule=T, mc.cores=detectCores() )
+
+# DONE
+print("DONE")
