@@ -42,17 +42,22 @@ redis.port <- if ( length(trailing.args) == 3 ) {
                 6379
               }
 
-# Connect to redis
-try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
-if ( identical(class(try.res), 'try-error') )
-  stop("Could not connect to redis server")
 
 # Start computation in parallel
-lapply( accessions, function(uniprot.acc) {
+mclapply( accessions, function(uniprot.acc) {
+    # Connect to redis
+    try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
+    if ( identical(class(try.res), 'try-error') )
+    stop("Could not connect to redis server")
+
+    # Read data
     u <- uniprotInterProMatchUrl( as.character(uniprot.acc) )
     d <- downloadXmlDoc( u )
+    
+    # Parse and compute domain weights
     if ( ! identical(class(d), 'try-error') )
       computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
     else
       print( paste("URL", u, "did return an error") )
+    
     } )
