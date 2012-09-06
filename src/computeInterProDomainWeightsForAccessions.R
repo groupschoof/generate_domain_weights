@@ -48,12 +48,11 @@ if ( identical(class(try.res), 'try-error') )
   stop("Could not connect to redis server")
 
 # Start computation in parallel
-mclapply( accessions, function(uniprot.acc) {
+lapply( accessions, function(uniprot.acc) {
     u <- uniprotInterProMatchUrl( as.character(uniprot.acc) )
     d <- downloadXmlDoc( u )
     if ( ! identical(class(d), 'try-error') )
       computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
     else
       print( paste("URL", u, "did return an error") )
-  },
-  mc.preschedule=F, mc.cores=50 )
+    } )
