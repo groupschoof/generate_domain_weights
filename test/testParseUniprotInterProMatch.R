@@ -70,6 +70,12 @@ print("Testing getProtein(...)")
 prt.rslt <- getProtein(exmpl.doc)
 checkTrue(!is.null( prt.rslt ))
 checkEquals(xmlGetAttr(prt.rslt, 'id'), 'A0A000')
+# NULL should be returned if document does not contain protein-tag:
+fake <- getProtein(
+  xmlInternalTreeParse("<tag id='my.tag'>Content</tag>"))
+checkTrue(is.null(fake))
+checkEquals( redisSPop("errors"),
+  "Error: Document '<?xml version=\"1.0\"?>\n<tag id=\"my.tag\">Content</tag>\n ' did not contain a protein tag.")
 
 # Test getIprScnMatches
 print("Testing getIprScnMatches(...)")

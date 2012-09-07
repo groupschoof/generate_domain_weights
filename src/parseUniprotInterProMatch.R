@@ -32,7 +32,17 @@ downloadUniprotDocsAndParse <- function(uniprot.accessions, noverbose=T) {
 }
 
 getProtein <- function(xml.doc) {
-  getNodeSet(xml.doc, "//protein")[[1]]
+  p <- getNodeSet(xml.doc, "//protein")
+  # return
+  if ( length(p) == 0 ) {
+    logError(paste("Error: Document '",
+        toString.XMLNode( xml.doc ),
+        "' did not contain a protein tag.",
+        sep=''))
+    NULL
+  } else {
+    p[[1]]
+  }
 }
 
 getIprScnMatches <- function(prot.node) {
