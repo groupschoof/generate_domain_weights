@@ -143,11 +143,11 @@ checkEquals( rownames(parse.rslt), inter.pro.accessions )
 # Test computeInterProDomainWeights
 print("Testing computeInterProDomainWeights(...)")
 computeInterProDomainWeights(parse.rslt)
-checkEquals( redisSCard('ipr_accessions'), length(inter.pro.accessions) )
+checkEquals( redisSCard('interpro_domain_ids'), length(inter.pro.accessions) )
 checkEquals( redisGet('IPR015422_cnt'), '1' )
 checkEquals( redisSCard('IPR015422_nghbrs'), 2 )
 computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.2) )
-checkEquals( redisSCard('ipr_accessions'), length(inter.pro.accessions) + 1 )
+checkEquals( redisSCard('interpro_domain_ids'), length(inter.pro.accessions) + 1 )
 checkEquals( redisGet('IPR015424_cnt'), '2' )
 # And after computing another document, in which 'IPR015424' has TWO 'start'
 # neighbors and no 'end' neighbors:
@@ -160,7 +160,7 @@ computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.4) )
 checkEquals( length( redisKeys() ), rks )
 # Document with only a single annotated InterPro Domain
 computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) )
-checkEquals( redisSCard('ipr_accessions'), 4 )
+checkEquals( redisSCard('interpro_domain_ids'), 4 )
 checkEquals( redisSCard('IPR000001_nghbrs'), 0 )
 
 # Clean up, girl:

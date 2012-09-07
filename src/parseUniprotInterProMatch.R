@@ -102,7 +102,7 @@ parseUniprotIprMatchDocument <- function(xml.doc) {
 }
 
 iprDomAccessions <- function(ipr.id,
-  accessions.set.key='ipr_accessions') {
+  accessions.set.key='interpro_domain_ids') {
   redisSAdd(accessions.set.key, charToRaw(ipr.id))
 }
 
