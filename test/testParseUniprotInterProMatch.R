@@ -162,3 +162,6 @@ checkEquals( length( redisKeys() ), rks )
 computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) )
 checkEquals( redisSCard('ipr_accessions'), 4 )
 checkEquals( redisSCard('IPR000001_nghbrs'), 0 )
+
+# Clean up, girl:
+redisFlushAll()

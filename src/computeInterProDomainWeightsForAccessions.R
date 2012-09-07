@@ -28,7 +28,7 @@ trailing.args <- commandArgs(trailingOnly=T)
 if ( length(trailing.args) < 1 )
   stop("Missing arguments! See Usage for details!")
 
-accessions <- read.table(trailing.args[[1]])$V1
+accessions <- as.character( read.table(trailing.args[[1]])$V1 )
 
 redis.host <- if ( length(trailing.args) == 3 ) {
                 trailing.args[[2]] 
@@ -42,23 +42,18 @@ redis.port <- if ( length(trailing.args) == 3 ) {
                 6379
               }
 
+# Read data.
+uniprot.xml.docs <- downloadUniprotDocsAndParse( accessions )
 
 # Start computation in parallel
-rslt <- mclapply( accessions, function(uniprot.acc) {
+rslt <- mclapply( uniprot.xml.docs, function(d) {
     # Connect to redis
     try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
     if ( identical(class(try.res), 'try-error') )
-    stop("Could not connect to redis server")
-
-    # Read data
-    u <- uniprotInterProMatchUrl( as.character(uniprot.acc) )
-    d <- downloadXmlDoc( u )
+      stop("Could not connect to redis server")
     
     # Parse and compute domain weights
-    if ( ! identical(class(d), 'try-error') )
-      computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
-    else
-      print( paste("URL", u, "did return an error") )
+    computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
     
     # Clean up, boy:
     redisClose()
