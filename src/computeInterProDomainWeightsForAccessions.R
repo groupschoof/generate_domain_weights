@@ -43,7 +43,7 @@ redis.port <- if ( length(trailing.args) == 3 ) {
               }
 
 # Read data.
-uniprot.xml.docs <- downloadUniprotDocsAndParse( accessions )
+uniprot.xml.docs <- downloadUniprotDocsAndParse( accessions, noverbose=F )
 
 # Start computation in parallel
 rslt <- mclapply( uniprot.xml.docs, function(d) {

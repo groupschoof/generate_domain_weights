@@ -23,11 +23,12 @@ downloadUniprotDocsAndParse <- function(uniprot.accessions, noverbose=T) {
     uniprotInterProMatchUrl )
   uni.docs <- getURL(uni.uris)
   uni.xmls <- lapply(uni.docs, function(d) {
-      if( ! is.null(d) && ! is.na(d) && ! grepl('^ERROR',d) )
-        xmlInternalTreeParse(d)
+      if( ! is.null(d) && ! is.na(d) &&
+        ! identical(d,'') && ! grepl('^ERROR',d) ) 
+      try( xmlInternalTreeParse(d), silent=noverbose )
     })
-  # return only non null uni.xmls:
-  uni.xmls[ ! as.logical( lapply(uni.xmls, is.null) ) ]
+  # return only non null uni.xmls which includes ERRORs:
+  ret.xmls <- uni.xmls[ ! as.logical( lapply(uni.xmls, is.null) ) ]
 }
 
 getProtein <- function(xml.doc) {
@@ -84,20 +85,26 @@ neighbors <- function(position.matrix, row.name) {
 }
 
 parseUniprotIprMatchDocument <- function(xml.doc) {
-  iapm <- iprAnnotationPositionsMatrix(xml.doc)
-  if ( ! is.null(iapm) ) {
-    if ( nrow(iapm) == 1 ) {
-      matrix( c(NA, NA), nrow=1, dimnames=list(rownames(iapm), locations) )
-    } else {
-      do.call('rbind', 
-        lapply( rownames(iapm), function(row.name) {
-            ngbs <- neighbors(iapm, row.name)
-            matrix( ngbs, nrow=1, 
-              dimnames=list(c(row.name), names(ngbs))
-              )
-          })
-        )
+  if ( ! is.null(xml.doc) && ! identical(class(xml.doc), 'try-error') ) {
+    iapm <- iprAnnotationPositionsMatrix(xml.doc)
+    if ( ! is.null(iapm) ) {
+      if ( nrow(iapm) == 1 ) {
+        matrix( c(NA, NA), nrow=1, dimnames=list(rownames(iapm), locations) )
+      } else {
+        do.call('rbind', 
+          lapply( rownames(iapm), function(row.name) {
+              ngbs <- neighbors(iapm, row.name)
+              matrix( ngbs, nrow=1, 
+                dimnames=list(c(row.name), names(ngbs))
+                )
+            })
+          )
+      }
     }
+  } else {
+    logError( xml.doc )
+    # return
+    NULL
   }
 }
 
@@ -117,6 +124,10 @@ iprDomCount <- function(ipr.id) {
 iprDomVersatility <- function(ipr.id, neighbor.domain.id) {
   redis.id <- paste(ipr.id, '_nghbrs', sep='')
   redisSAdd(redis.id, charToRaw(neighbor.domain.id))
+}
+
+logError <- function(err.message) {
+  redisSAdd("errors", err.message)
 }
 
 computeInterProDomainWeights <- function(ipr.domain.matrix) {

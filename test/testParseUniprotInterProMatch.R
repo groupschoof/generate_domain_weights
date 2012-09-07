@@ -46,7 +46,7 @@ checkEquals( length(uni.xmls), 3 )
 no.acc.res <-  downloadUniprotDocsAndParse('NoAccession') 
 checkEquals( class(no.acc.res), 'list' )
 checkEquals( length(no.acc.res), 0 )
-one.missing.acc.res <-  downloadUniprotDocsAndParse(c( 'NoAccession', 'Q6GZX4' )) 
+one.missing.acc.res <-  downloadUniprotDocsAndParse(c( 'NoAccession', 'Q6GZX4' ), noverbose=F) 
 checkEquals( class(one.missing.acc.res), 'list' )
 checkEquals( length(one.missing.acc.res), 1 )
 
@@ -86,7 +86,7 @@ checkEquals(interProAnnotation(rslt.ipr.matches[[1]]),
 
 # Test iprAnnotationPositionsMatrix
 print("Testing iprAnnotationPositionsMatrix(...)")
-ipr.match.parsed <- try(iprAnnotationPositionsMatrix(exmpl.doc), silent=F)
+ipr.match.parsed <- try(iprAnnotationPositionsMatrix(exmpl.doc), silent=T)
 checkTrue(!identical(class(ipr.match.parsed), 'try-error'))
 checkEquals(class(ipr.match.parsed), 'matrix')
 checkTrue(nrow(ipr.match.parsed) == 5)
@@ -139,6 +139,11 @@ checkEquals( nrow(parse.rslt), 5)
 checkEquals( ncol(parse.rslt), 2)
 checkEquals( colnames(parse.rslt), c('start', 'end'))
 checkEquals( rownames(parse.rslt), inter.pro.accessions )
+# Assure NULL is returned and a try-error is logged, when a malformed
+# XML document is attempted to be parsed:
+parse.error <- parseUniprotIprMatchDocument( try(xmlInternalTreeParse("Foo Bar Baz"), silent=T) )
+checkTrue( grepl('^Error', redisSPop("errors"), perl=T))
+checkTrue( is.null(parse.error) )
 
 # Test computeInterProDomainWeights
 print("Testing computeInterProDomainWeights(...)")
@@ -162,6 +167,11 @@ checkEquals( length( redisKeys() ), rks )
 computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) )
 checkEquals( redisSCard('interpro_domain_ids'), 4 )
 checkEquals( redisSCard('IPR000001_nghbrs'), 0 )
+
+# Test logError
+print("Testing logError(...)")
+logError("Foo Bar Baz")
+checkEquals(redisSPop("errors"), 'Foo Bar Baz')
 
 # Clean up, girl:
 redisFlushAll()
