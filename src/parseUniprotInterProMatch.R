@@ -62,9 +62,11 @@ interProAnnotation <- function(match.node) {
 }
 
 iprAnnotationPositionsMatrix <- function(xml.doc) {
-  do.call('rbind', 
-    lapply(getIprScnMatches(getProtein(xml.doc)),
-      interProAnnotation))
+  p <- getProtein(xml.doc)
+  if ( ! is.null(p) )
+    do.call('rbind', 
+  lapply(getIprScnMatches( p ),
+  interProAnnotation))
 }
 
 neighbors <- function(position.matrix, row.name) {
@@ -162,4 +164,13 @@ computeInterProDomainWeights <- function(ipr.domain.matrix) {
   }
   # No error, so return:
   TRUE
+}
+
+wasBusy <- function(d) {
+  ns <- getNodeSet(d, "//h2")
+  (length(ns) == 1 && identical(xmlValue(ns[[1]]), "Server Too Busy"))
+}
+
+findServerBusyResults <- function(xml.docs) {
+  xml.docs[ as.logical( lapply(xml.docs, wasBusy) ) ]
 }

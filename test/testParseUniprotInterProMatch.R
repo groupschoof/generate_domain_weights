@@ -179,5 +179,20 @@ print("Testing logError(...)")
 logError("Foo Bar Baz")
 checkEquals(redisSPop("errors"), 'Foo Bar Baz')
 
+# Test wasBusy
+print("Testing wasBusy(...)")
+busy.doc <- xmlInternalTreeParse('<?xml version=\"1.0\"?>\n<h2>Server Too Busy</h2>\n ')
+checkTrue(wasBusy(busy.doc))
+checkTrue( ! wasBusy(exmpl.doc))
+
+# Test findServerBusyResults
+print("Testing findServerBusyResults(...)")
+f <- file(project.file.path("test", "uniprot_xml_docs_serialized.txt"), "r")
+xml.docs <- unserialize(f)
+close(f)
+print( findServerBusyResults(xml.docs) )
+checkEquals( findServerBusyResults(xml.docs), xml.docs[1:7] )
+checkEquals( findServerBusyResults(xml.docs[1:3]), xml.docs[1:3] )
+
 # Clean up, girl:
 redisFlushAll()
