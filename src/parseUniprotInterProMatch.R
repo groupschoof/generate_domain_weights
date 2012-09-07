@@ -1,5 +1,6 @@
 library(XML)
 library(rredis)
+library(RCurl)
 
 # CONSTANTS:
 locations <- c('start','end')
@@ -15,6 +16,18 @@ uniprotInterProMatchUrl <- function(accession) {
 
 downloadXmlDoc <- function(uniprot.url, noverbose=T) {
   try(xmlInternalTreeParse(uniprot.url), silent=noverbose)
+}
+
+downloadUniprotDocsAndParse <- function(uniprot.accessions, noverbose=T) {
+  uni.uris <- lapply( as.character( uniprot.accessions ),
+    uniprotInterProMatchUrl )
+  uni.docs <- getURL(uni.uris)
+  uni.xmls <- lapply(uni.docs, function(d) {
+      if( ! is.null(d) && ! is.na(d) && ! grepl('^ERROR',d) )
+        xmlInternalTreeParse(d)
+    })
+  # return only non null uni.xmls:
+  uni.xmls[ ! as.logical( lapply(uni.xmls, is.null) ) ]
 }
 
 getProtein <- function(xml.doc) {

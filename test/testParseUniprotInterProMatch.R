@@ -36,6 +36,20 @@ checkTrue(identical(class(rslt),
 rslt <- downloadXmlDoc("http://non.existing.url")
 checkTrue(identical(class(rslt), 'try-error'))
 
+# Test downloadUniprotDocsAndParse
+print("Testing downloadUniprotDocsAndParse(...)")
+uni.xmls <- downloadUniprotDocsAndParse( c( "Q6GZX4", "Q6GZX3", "Q197F8" ) )
+checkEquals( class( uni.xmls ), 'list' )
+checkEquals( class( uni.xmls[[1]] ),
+  c( "XMLInternalDocument", "XMLAbstractDocument", "oldClass" ) )
+checkEquals( length(uni.xmls), 3 )
+no.acc.res <-  downloadUniprotDocsAndParse('NoAccession') 
+checkEquals( class(no.acc.res), 'list' )
+checkEquals( length(no.acc.res), 0 )
+one.missing.acc.res <-  downloadUniprotDocsAndParse(c( 'NoAccession', 'Q6GZX4' )) 
+checkEquals( class(one.missing.acc.res), 'list' )
+checkEquals( length(one.missing.acc.res), 1 )
+
 # Downloaded test document to perform following tests
 exmpl.doc <- xmlInternalTreeParse(
   project.file.path( "test","downloaded_iprmatch_A0A000.xml" ))
