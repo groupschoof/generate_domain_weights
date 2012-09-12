@@ -22,34 +22,6 @@ if (identical(class(rc), 'try-error'))
   stop("Could not connect to redis server. Did you start it?")
 redisFlushAll()
 
-# Test uniprotInterProMatchUrl
-print("Testing uniprotInterProMatchUrl(...)")
-ipr.match.url <- uniprotInterProMatchUrl('A0A000')
-checkEquals(ipr.match.url,
-  'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch?db=iprmc;id=A0A000;format=iprmcxml')
-
-# Test downloadXmlDoc
-print("Testing downloadXmlDoc(...)")
-rslt <- downloadXmlDoc(ipr.match.url)
-checkTrue(identical(class(rslt),
-    c("XMLInternalDocument", "XMLAbstractDocument", "oldClass" )))
-rslt <- downloadXmlDoc("http://non.existing.url")
-checkTrue(identical(class(rslt), 'try-error'))
-
-# Test downloadUniprotDocsAndParse
-print("Testing downloadUniprotDocsAndParse(...)")
-uni.xmls <- downloadUniprotDocsAndParse( c( "Q6GZX4", "Q6GZX3", "Q197F8" ) )
-checkEquals( class( uni.xmls ), 'list' )
-checkEquals( class( uni.xmls[[1]] ),
-  c( "XMLInternalDocument", "XMLAbstractDocument", "oldClass" ) )
-checkEquals( length(uni.xmls), 3 )
-no.acc.res <-  downloadUniprotDocsAndParse('NoAccession') 
-checkEquals( class(no.acc.res), 'list' )
-checkEquals( length(no.acc.res), 0 )
-one.missing.acc.res <-  downloadUniprotDocsAndParse(c( 'NoAccession', 'Q6GZX4' ), noverbose=F) 
-checkEquals( class(one.missing.acc.res), 'list' )
-checkEquals( length(one.missing.acc.res), 1 )
-
 # Downloaded test document to perform following tests
 exmpl.doc <- xmlInternalTreeParse(
   project.file.path( "test","downloaded_iprmatch_A0A000.xml" ))
@@ -178,21 +150,6 @@ checkEquals( redisSCard('IPR000001_nghbrs'), 0 )
 print("Testing logError(...)")
 logError("Foo Bar Baz")
 checkEquals(redisSPop("errors"), 'Foo Bar Baz')
-
-# Test wasBusy
-print("Testing wasBusy(...)")
-busy.doc <- xmlInternalTreeParse('<?xml version=\"1.0\"?>\n<h2>Server Too Busy</h2>\n ')
-checkTrue(wasBusy(busy.doc))
-checkTrue( ! wasBusy(exmpl.doc))
-
-# Test findServerBusyResults
-print("Testing findServerBusyResults(...)")
-f <- file(project.file.path("test", "uniprot_xml_docs_serialized.txt"), "r")
-xml.docs <- unserialize(f)
-close(f)
-print( findServerBusyResults(xml.docs) )
-checkEquals( findServerBusyResults(xml.docs), xml.docs[1:7] )
-checkEquals( findServerBusyResults(xml.docs[1:3]), xml.docs[1:3] )
 
 # Clean up, girl:
 redisFlushAll()

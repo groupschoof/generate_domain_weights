@@ -5,32 +5,6 @@ library(RCurl)
 # CONSTANTS:
 locations <- c('start','end')
 
-uniprotInterProMatchUrl <- function(accession) {
-  paste(
-    'http://www.ebi.ac.uk/Tools/dbfetch/dbfetch?db=iprmc;id=',
-    accession,
-    ';format=iprmcxml',
-    sep=''
-    )
-}
-
-downloadXmlDoc <- function(uniprot.url, noverbose=T) {
-  try(xmlInternalTreeParse(uniprot.url), silent=noverbose)
-}
-
-downloadUniprotDocsAndParse <- function(uniprot.accessions, noverbose=T) {
-  uni.uris <- lapply( as.character( uniprot.accessions ),
-    uniprotInterProMatchUrl )
-  uni.docs <- getURL(uni.uris)
-  uni.xmls <- lapply(uni.docs, function(d) {
-      if( ! is.null(d) && ! is.na(d) &&
-        ! identical(d,'') && ! grepl('^ERROR',d) ) 
-      try( xmlInternalTreeParse(d), silent=noverbose )
-    })
-  # return only non null uni.xmls which includes ERRORs:
-  ret.xmls <- uni.xmls[ ! as.logical( lapply(uni.xmls, is.null) ) ]
-}
-
 getProtein <- function(xml.doc) {
   p <- getNodeSet(xml.doc, "//protein")
   # return
@@ -164,13 +138,4 @@ computeInterProDomainWeights <- function(ipr.domain.matrix) {
   }
   # No error, so return:
   TRUE
-}
-
-wasBusy <- function(d) {
-  ns <- getNodeSet(d, "//h2")
-  (length(ns) == 1 && identical(xmlValue(ns[[1]]), "Server Too Busy"))
-}
-
-findServerBusyResults <- function(xml.docs) {
-  xml.docs[ as.logical( lapply(xml.docs, wasBusy) ) ]
 }
