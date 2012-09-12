@@ -1,0 +1,114 @@
+<protein id="A0A002" name="A0A002_9ACTO" length="564" crc64="B41A3E92A6CB830E">
+  <match id="G3DSA:1.20.1560.10" name="G3DSA:1.20.1560.10" dbname="GENE3D" status="T" evd="HMMPfam">
+    <lcn start="4" end="303" score="2.1000000000000036E-51" />
+  </match>
+  <match id="G3DSA:3.40.50.300" name="G3DSA:3.40.50.300" dbname="GENE3D" status="T" evd="HMMPfam">
+    <lcn start="324" end="553" score="8.70000000000003E-62" />
+  </match>
+  <match id="PF00005" name="ABC_tran" dbname="PFAM" status="T" evd="HMMPfam">
+    <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
+    <lcn start="364" end="489" score="6.3000000000000046E-15" />
+  </match>
+  <match id="PF00664" name="ABC_membrane" dbname="PFAM" status="T" evd="HMMPfam">
+    <ipr id="IPR001140" name="ABC transporter, transmembrane domain" type="Domain" parent_id="IPR017940" />
+    <lcn start="9" end="279" score="1.6000000000000008E-23" />
+  </match>
+  <match id="PS50893" name="ABC_TRANSPORTER_2" dbname="PROFILE" status="T" evd="PrfScan">
+    <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
+    <lcn start="324" end="558" score="0.0" />
+  </match>
+  <match id="PS50929" name="ABC_TM1F" dbname="PROFILE" status="T" evd="PrfScan">
+    <ipr id="IPR017940" name="ABC transporter, integral membrane type 1" type="Domain" parent_id="IPR011527" />
+    <lcn start="17" end="291" score="0.0" />
+  </match>
+  <match id="PTHR24223" name="PTHR24223" dbname="PANTHER" status="T" evd="HMMPfam">
+    <lcn start="4" end="563" score="0.0" />
+  </match>
+  <match id="PTHR24223:SF116" name="PTHR24223:SF116" dbname="PANTHER" status="T" evd="HMMPfam">
+    <lcn start="4" end="563" score="0.0" />
+  </match>
+  <match id="SM00382" name="AAA" dbname="SMART" status="T" evd="Smart scan">
+    <ipr id="IPR003593" name="AAA+ ATPase domain" type="Domain" />
+    <lcn start="349" end="535" score="1.8000014928719636E-12" />
+  </match>
+  <match id="SSF52540" name="SSF52540" dbname="SSF" status="T" evd="HMMPfam">
+    <lcn start="324" end="541" score="8.399980140249808E-60" />
+  </match>
+  <match id="SSF90123" name="ABC_TM_1" dbname="SSF" status="T" evd="HMMPfam">
+    <ipr id="IPR011527" name="ABC transporter, transmembrane domain, type 1" type="Domain" />
+    <lcn start="1" end="301" score="4.399990012377245E-55" />
+  </match>
+</protein>
+<protein id="A0A003" name="A0A003_9ACTO" length="340" crc64="2186CFD513C4A3EB">
+  <match id="G3DSA:3.40.50.720" name="NAD(P)-bd" dbname="GENE3D" status="T" evd="HMMPfam">
+    <ipr id="IPR016040" name="NAD(P)-binding domain" type="Domain" />
+    <lcn start="15" end="202" score="1.9999999999999944E-51" />
+  </match>
+  <match id="G3DSA:3.90.25.10" name="G3DSA:3.90.25.10" dbname="GENE3D" status="T" evd="HMMPfam">
+    <lcn start="203" end="318" score="5.500000000000002E-27" />
+  </match>
+  <match id="PF01370" name="Epimerase" dbname="PFAM" status="T" evd="HMMPfam">
+    <ipr id="IPR001509" name="NAD-dependent epimerase/dehydratase" type="Domain" />
+    <lcn start="15" end="249" score="3.0999999999999807E-53" />
+  </match>
+  <match id="PR01713" name="NUCEPIMERASE" dbname="PRINTS" status="T" evd="FPrintScan">
+    <ipr id="IPR008089" name="Nucleotide sugar epimerase" type="Family" />
+    <lcn start="220" end="235" score="3.799998626447902E-9" />
+  </match>
+  <match id="PR01713" name="NUCEPIMERASE" dbname="PRINTS" status="T" evd="FPrintScan">
+    <ipr id="IPR008089" name="Nucleotide sugar epimerase" type="Family" />
+    <lcn start="243" end="258" score="3.799998626447902E-9" />
+  </match>
+  <match id="PR01713" name="NUCEPIMERASE" dbname="PRINTS" status="T" evd="FPrintScan">
+    <ipr id="IPR008089" name="Nucleotide sugar epimerase" type="Family" />
+    <lcn start="282" end="299" score="3.799998626447902E-9" />
+  </match>
+  <match id="PTHR10366" name="PTHR10366" dbname="PANTHER" status="T" evd="HMMPfam">
+    <lcn start="15" end="332" score="2.8000050426109874E-83" />
+  </match>
+  <match id="SSF51735" name="NAD(P)-bd" dbname="SSF" status="T" evd="HMMPfam">
+    <lcn start="14" end="317" score="1.5999883531364444E-85" />
+  </match>
+</protein>
+<protein id="A0A004" name="A0A004_9ACTO" length="645" crc64="D762860BE0292BFC">
+  <match id="G3DSA:3.40.50.620" name="Rossmann-like_a/b/a_fold" dbname="GENE3D" status="T" evd="HMMPfam">
+    <ipr id="IPR014729" name="Rossmann-like alpha/beta/alpha sandwich fold" type="Domain" />
+    <lcn start="225" end="378" score="1.799999999999975E-74" />
+  </match>
+  <match id="G3DSA:3.40.50.620" name="Rossmann-like_a/b/a_fold" dbname="GENE3D" status="T" evd="HMMPfam">
+    <ipr id="IPR014729" name="Rossmann-like alpha/beta/alpha sandwich fold" type="Domain" />
+    <lcn start="477" end="627" score="1.799999999999975E-74" />
+  </match>
+  <match id="G3DSA:3.60.20.10" name="G3DSA:3.60.20.10" dbname="GENE3D" status="T" evd="HMMPfam">
+    <lcn start="1" end="218" score="1.6999999999999924E-31" />
+  </match>
+  <match id="PF00733" name="Asn_synthase" dbname="PFAM" status="T" evd="HMMPfam">
+    <ipr id="IPR001962" name="Asparagine synthase" type="Domain" parent_id="IPR014729" />
+    <lcn start="240" end="559" score="6.499999999999916E-59" />
+  </match>
+  <match id="PF13537" name="GATase_7" dbname="PFAM" status="T" evd="HMMPfam">
+    <ipr id="IPR000583" name="Class II glutamine amidotransferase domain" type="Domain" />
+    <lcn start="48" end="162" score="4.700000000000006E-11" />
+  </match>
+  <match id="PIRSF001589" name="Asn_synthetase_glu-h" dbname="PIRSF" status="T" evd="HMMPfam">
+    <ipr id="IPR006426" name="Asparagine synthase, glutamine-hydrolyzing" type="Family" />
+    <lcn start="1" end="640" score="5.3999701287247774E-77" />
+  </match>
+  <match id="PS51278" name="GATASE_TYPE_2" dbname="PROFILE" status="T" evd="PrfScan">
+    <ipr id="IPR017932" name="Glutamine amidotransferase type 2 domain" type="Domain" />
+    <lcn start="2" end="209" score="0.0" />
+  </match>
+  <match id="PTHR11772" name="PTHR11772" dbname="PANTHER" status="T" evd="HMMPfam">
+    <lcn start="1" end="577" score="1.200001174581343E-53" />
+  </match>
+  <match id="SSF52402" name="SSF52402" dbname="SSF" status="T" evd="HMMPfam">
+    <lcn start="214" end="625" score="9.400030710308353E-83" />
+  </match>
+  <match id="SSF56235" name="SSF56235" dbname="SSF" status="T" evd="HMMPfam">
+    <lcn start="1" end="220" score="1.6000024069599734E-36" />
+  </match>
+  <match id="TIGR01536" name="Asn_synth_AEB" dbname="TIGRFAMs" status="T" evd="HMMPfam">
+    <ipr id="IPR006426" name="Asparagine synthase, glutamine-hydrolyzing" type="Family" />
+    <lcn start="2" end="562" score="5.4000000000000186E-89" />
+  </match>
+</protein>
