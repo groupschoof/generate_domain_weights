@@ -16,34 +16,34 @@ src.project.file <- function(...) {
 }
 src.project.file('src','uniprotInterProMatchDataIO.R')
 
-# Test extractCompleteProteinTags
-print("Testing extractCompleteProteinTags(...)")
+# Test extractChunksWithCompleteProteinTags
+print("Testing extractChunksWithCompleteProteinTags(...)")
 uni.ipr.scn.path <- project.file.path("test",
     "testUniprotInterProCompleteMatchFile.xml")
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 1, 25 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 1, 25 )
 checkEquals( extr.lines,
   scan(uni.ipr.scn.path, sep="\n", nlines=41, what=character()) )
 
 # Test no start and no end tag
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 5, 20 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 5, 20 )
 checkTrue( is.null(extr.lines) ) 
 
 # Test no start but an end tag
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 20, 21 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 20, 21 )
 checkTrue( is.null(extr.lines) ) 
 
 # Test a start but no end tag
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 42, 20 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 42, 20 )
 checkEquals( extr.lines,
   scan(uni.ipr.scn.path, sep="\n", skip=41, nlines=31, what=character()) )
 
 # Test a complete protein tag
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 42, 30 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 42, 30 )
 checkEquals( extr.lines,
   scan(uni.ipr.scn.path, sep="\n", skip=41, nlines=31, what=character()) )
 
 # Test multiple protein tags, last without end tag
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 1, 65 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 1, 65 )
 checkEquals( extr.lines,
   scan(uni.ipr.scn.path, sep="\n", nlines=72, what=character()) )
 
@@ -51,5 +51,5 @@ checkEquals( extr.lines,
 print("Testing xmlUniprotInterProMatchProteinNodes(...)")
 checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 2 )
 # A single protein tag:
-extr.lines <- extractCompleteProteinTags( uni.ipr.scn.path, 42, 30 )
+extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 42, 30 )
 checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 1 )

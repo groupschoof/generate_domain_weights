@@ -31,6 +31,9 @@ trailing.args <- commandArgs(trailingOnly=T)
 if ( length(trailing.args) < 3 )
   stop("Missing arguments! See Usage for details!")
 
+start.line.number <- as.integer( trailing.args[[2]] )
+no.of.lines.to.read <- as.integer( trailing.args[[3]] )
+
 redis.host <- if ( length(trailing.args) == 5 ) {
                 trailing.args[[4]] 
               } else {
@@ -45,8 +48,8 @@ redis.port <- if ( length(trailing.args) == 5 ) {
 
 # Read data.
 uniprot.xml.docs <- xmlUniprotInterProMatchProteinNodes(
-  extractCompleteProteinTags( trailing.args[[1]], trailing.args[[2]],
-    read.lines=trailing.args[[3]] ))
+  extractChunksWithCompleteProteinTags( trailing.args[[1]], start.line.number, no.of.lines.to.read ))
+print( uniprot.xml.docs )
 
 # Start computation in parallel
 rslt <- mclapply( uniprot.xml.docs, function(d) {

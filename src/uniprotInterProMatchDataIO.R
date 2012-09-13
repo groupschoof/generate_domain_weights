@@ -23,7 +23,7 @@ appendSegmentTillProteinEndTag <- function(path.to.file,
   }
 }
 
-extractCompleteProteinTags <- function(path.to.file,
+extractChunksWithCompleteProteinTags <- function(path.to.file,
   start.line.no, read.lines=10000,
   prot.start.tag.regex="<protein",
   prot.end.tag.regex="</protein") {
@@ -43,6 +43,52 @@ extractCompleteProteinTags <- function(path.to.file,
       c( lines.chunk[ min(beg.ind) : length(lines.chunk) ], 
         appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines ),
           read.lines, prot.end.tag.regex ) )
+    }
+  }
+}
+
+extractSingleProteinTags <- function( txt,
+  prot.start.tag.regex="<protein",
+  prot.end.tag.regex="</protein" ) {
+  # Constructs a character vector with all protein tag entries found in
+  # argument 'txt'. Each protein tag will be a single entry. Preceeding
+  # and trailing 'junk' will be discarded. 
+  #
+  # Args:
+  #  txt : The chunk of currently processed text to be parsed for protein tags.
+  #
+  #  prot.start.tag.regex : The regular expression used to find protein
+  #                         start tags.
+  #
+  #  prot.end.tag.regex : The regular expression used to find protein
+  #                       end tags.
+  #
+  # Returns: A character vector of all found protein tags.
+
+  prot.beg.ind <- regexpr(prot.start.tag.regex, txt)[[1]]
+  prot.end.ind <- regexpr(prot.end.tag.regex, txt)[[1]]
+
+  # Return
+  if ( prot.beg.ind < 0 || prot.end.ind < 0 ) {
+    # CASE: Some rest text, that does not hold a complete protein tag.
+    NULL
+  } else {
+    # CASE: At least a single protein tag encoded in current chunk of
+    # text.
+    prot.tag.txt <- substr( txt, prot.beg.ind, prot.end.ind )
+
+    # More to parse?
+    if ( prot.end.ind < nchar(txt) ) {
+      # CASE: Trailing rest after the protein end tag in current chunk of text?
+      all.results <- c( prot.tag.txt,
+        extractSingleProteinTags(
+          substr( txt, (prot.end.ind + 1), nchar(txt) ),
+          prot.start.tag.regex, prot.end.tag.regex ))
+      # return only non NULL entries:
+      all.results[ ! is.null(all.results) ]
+    } else {
+      # CASE: Just the single protein tag found.
+      prot.tag.txt
     }
   }
 }
