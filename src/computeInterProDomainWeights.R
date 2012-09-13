@@ -18,32 +18,34 @@ src.project.file('src','parseUniprotInterProMatch.R')
 
 # Print out Usage:
 print( paste("Usage: Rscript",
-    "computeInterProDomainWeightsForAccessions.R", 
-    "one_uniprot_accession_per_line.txt",
-    "[http://redis.server.url default 'localhost']",
-    "[redis_port] default '6379'") )
+    "computeInterProDomainWeights.R", 
+    "path/to/match_complete.xml",
+    "start.line.number",
+    "no.of.lines.to.read",
+    "[http://redis.server.url ( default 'localhost' )",
+    "redis_port ( default '6379' )]") )
 
 # Read input
 trailing.args <- commandArgs(trailingOnly=T)
-if ( length(trailing.args) < 1 )
+if ( length(trailing.args) < 3 )
   stop("Missing arguments! See Usage for details!")
 
-accessions <- as.character( read.table(trailing.args[[1]])$V1 )
-
-redis.host <- if ( length(trailing.args) == 3 ) {
-                trailing.args[[2]] 
+redis.host <- if ( length(trailing.args) == 5 ) {
+                trailing.args[[4]] 
               } else {
                 'localhost'
               }
 
-redis.port <- if ( length(trailing.args) == 3 ) {
-                as.integer(trailing.args[[3]])
+redis.port <- if ( length(trailing.args) == 5 ) {
+                as.integer(trailing.args[[5]])
               } else {
                 6379
               }
 
 # Read data.
-uniprot.xml.docs <- downloadUniprotDocsAndParse( accessions, noverbose=F )
+uniprot.xml.docs <- xmlUniprotInterProMatchProteinNodes(
+  extractCompleteProteinTags( trailing.args[[1]], trailing.args[[2]],
+    read.lines=trailing.args[[3]] ))
 
 # Start computation in parallel
 rslt <- mclapply( uniprot.xml.docs, function(d) {
