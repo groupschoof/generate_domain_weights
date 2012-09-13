@@ -15,6 +15,7 @@ src.project.file <- function(...) {
   source(project.file.path(...))
 }
 src.project.file('src','parseUniprotInterProMatch.R')
+src.project.file('src','uniprotInterProMatchDataIO.R')
 
 # Print out Usage:
 print( paste("Usage: Rscript",
