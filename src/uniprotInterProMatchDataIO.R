@@ -1,3 +1,5 @@
+library(XML) 
+
 readSegment <- function(path.to.file,
   start.line.no, read.lines=10000) {
   scan(path.to.file, skip=( start.line.no - 1),
@@ -46,7 +48,9 @@ extractCompleteProteinTags <- function(path.to.file,
 }
 
 xmlUniprotInterProMatchProteinNodes <- function( xml.lines, protein.xpath="//protein" ) {
-  xml.inp <- do.call( 'paste', xml.lines )
+  xml.inp <- xmlInternalTreeParse( do.call( 'paste',
+      as.list( c( "<dummyEncloseContentInSingleTag>",
+          xml.lines, "</dummyEncloseContentInSingleTag>" ))))
   getNodeSet( xml.inp, protein.xpath )
 }
 
