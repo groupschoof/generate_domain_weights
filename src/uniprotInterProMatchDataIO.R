@@ -65,7 +65,7 @@ extractSingleProteinTags <- function( txt,
   #
   # Returns: A character vector of all found protein tags or NULL.
 
-  if ( is.null(txt) )
+  if ( is.null(txt) || is.na(txt) || length(txt) == 0 )
     return(NULL)
 
   prot.beg.ind <- regexpr(prot.start.tag.regex, txt)[[1]]
@@ -78,7 +78,7 @@ extractSingleProteinTags <- function( txt,
   } else {
     # CASE: Found an opening Protein Tag, so cut off preceeding 'junk' until
     # first protein tag
-    rest.txt <- substr( txt, prot.end.ind, nchar(txt) )
+    rest.txt <- substr( txt, prot.beg.ind, nchar(txt) )
     # Find index of first closing protein tag. Specifically its last char's
     # index.
     prot.end.match <- regexpr(prot.end.tag.regex, rest.txt)
@@ -91,7 +91,7 @@ extractSingleProteinTags <- function( txt,
     prot.end.ind <- prot.end.match[[1]] + attr(prot.end.match, 'match.length')
 
     prot.xml.txt <- substr( rest.txt, 1, prot.end.ind )
-    if ( prot.end.ind > nchar(rest.txt) ) {
+    if ( prot.end.ind < nchar(rest.txt) ) {
       # CASE: More text to parse
       rslt <- c( prot.xml.txt, 
         extractSingleProteinTags(substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt) )))

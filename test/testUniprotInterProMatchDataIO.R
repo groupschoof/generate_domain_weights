@@ -50,10 +50,17 @@ checkEquals( extr.lines,
 # Test extractSingleProteinTags
 print("Testing extractSingleProteinTags(...)")
 uni.ipr.scn.path.2 <- project.file.path( "test", "testUniprotInterProCompleteMatchFile_2.xml" )
-extr.lines.2 <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 20 )
+extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 20 ) ) )
 print( extr.lines.2 )
-checkEquals(extractSingleProteinTags(NA ),NA)
+extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+print( extr.xml.txt.2 )
+checkTrue( ! is.null( extr.xml.txt.2 ) )
 
+extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 70 ) ) )
+print( extr.lines.2 )
+extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+print( extr.xml.txt.2 )
+checkTrue( ! is.null( extr.xml.txt.2 ) )
 # Test xmlUniprotInterProMatchProteinNodes
 print("Testing xmlUniprotInterProMatchProteinNodes(...)")
 checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 2 )
