@@ -47,6 +47,13 @@ extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 1, 65 )
 checkEquals( extr.lines,
   scan(uni.ipr.scn.path, sep="\n", nlines=72, what=character()) )
 
+# Test extractSingleProteinTags
+print("Testing extractSingleProteinTags(...)")
+uni.ipr.scn.path.2 <- project.file.path( "test", "testUniprotInterProCompleteMatchFile_2.xml" )
+extr.lines.2 <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 20 )
+print( extr.lines.2 )
+checkEquals(extractSingleProteinTags(NA ),NA)
+
 # Test xmlUniprotInterProMatchProteinNodes
 print("Testing xmlUniprotInterProMatchProteinNodes(...)")
 checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 2 )

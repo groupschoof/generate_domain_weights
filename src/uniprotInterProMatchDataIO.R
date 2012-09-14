@@ -63,32 +63,43 @@ extractSingleProteinTags <- function( txt,
   #  prot.end.tag.regex : The regular expression used to find protein
   #                       end tags.
   #
-  # Returns: A character vector of all found protein tags.
+  # Returns: A character vector of all found protein tags or NULL.
+
+  if ( is.null(txt) )
+    return(NULL)
 
   prot.beg.ind <- regexpr(prot.start.tag.regex, txt)[[1]]
-  prot.end.ind <- regexpr(prot.end.tag.regex, txt)[[1]]
+  print( prot.beg.ind )
 
-  # Return
-  if ( prot.beg.ind < 0 || prot.end.ind < 0 ) {
-    # CASE: Some rest text, that does not hold a complete protein tag.
+  # RETURN:
+  if ( prot.beg.ind < 0 ) {
+    # CASE: No complete Protein Tag within this text chunk:
     NULL
   } else {
-    # CASE: At least a single protein tag encoded in current chunk of
-    # text.
-    prot.tag.txt <- substr( txt, prot.beg.ind, prot.end.ind )
+    # CASE: Found an opening Protein Tag, so cut off preceeding 'junk' until
+    # first protein tag
+    rest.txt <- substr( txt, prot.end.ind, nchar(txt) )
+    # Find index of first closing protein tag. Specifically its last char's
+    # index.
+    prot.end.match <- regexpr(prot.end.tag.regex, rest.txt)
+    # No closing protein tag is an error, because function
+    # 'extractChunksWithCompleteProteinTags' should not return a text chunk with
+    # an opening protein tag but without a closing one.
+    if (prot.end.match[[1]] < 0) {
+      stop("Had a text chunk with an opening but no closing protein tag.")
+    }
+    prot.end.ind <- prot.end.match[[1]] + attr(prot.end.match, 'match.length')
 
-    # More to parse?
-    if ( prot.end.ind < nchar(txt) ) {
-      # CASE: Trailing rest after the protein end tag in current chunk of text?
-      all.results <- c( prot.tag.txt,
-        extractSingleProteinTags(
-          substr( txt, (prot.end.ind + 1), nchar(txt) ),
-          prot.start.tag.regex, prot.end.tag.regex ))
-      # return only non NULL entries:
-      all.results[ ! is.null(all.results) ]
+    prot.xml.txt <- substr( rest.txt, 1, prot.end.ind )
+    if ( prot.end.ind > nchar(rest.txt) ) {
+      # CASE: More text to parse
+      rslt <- c( prot.xml.txt, 
+        extractSingleProteinTags(substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt) )))
+      # But only return non null entries:
+      rslt[ ! is.null(rslt[]) ]
     } else {
-      # CASE: Just the single protein tag found.
-      prot.tag.txt
+      # CASE: Just the protein tag, already found
+      prot.xml.txt
     }
   }
 }
