@@ -48,10 +48,9 @@ redis.port <- if ( length(trailing.args) == 5 ) {
 
 # Read data.
 uniprot.xml.docs <- extractSingleProteinTags( do.call( 'paste',
-  extractChunksWithCompleteProteinTags(
-    trailing.args[[1]], start.line.number, no.of.lines.to.read )
+  as.list( extractChunksWithCompleteProteinTags(
+    trailing.args[[1]], start.line.number, no.of.lines.to.read) )
   ))
-print( uniprot.xml.docs )
 
 # Start computation in parallel
 rslt <- mclapply( uniprot.xml.docs, function(d) {

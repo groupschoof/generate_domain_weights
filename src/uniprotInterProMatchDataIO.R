@@ -26,7 +26,8 @@ appendSegmentTillProteinEndTag <- function(path.to.file,
 extractChunksWithCompleteProteinTags <- function(path.to.file,
   start.line.no, read.lines=10000,
   prot.start.tag.regex="<protein",
-  prot.end.tag.regex="</protein") {
+  prot.end.tag.regex="</protein",
+  append.lines=400) {
 
   lines.chunk <- readSegment(path.to.file, start.line.no, read.lines)
   beg.ind <- which(grepl(prot.start.tag.regex, lines.chunk, fixed=T))
@@ -42,7 +43,7 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
       # Read into next chunk up to the first protein end tag
       c( lines.chunk[ min(beg.ind) : length(lines.chunk) ], 
         appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines ),
-          read.lines, prot.end.tag.regex ) )
+          append.lines, prot.end.tag.regex ) )
     }
   }
 }
