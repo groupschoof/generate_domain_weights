@@ -47,8 +47,10 @@ redis.port <- if ( length(trailing.args) == 5 ) {
               }
 
 # Read data.
-uniprot.xml.docs <- xmlUniprotInterProMatchProteinNodes(
-  extractChunksWithCompleteProteinTags( trailing.args[[1]], start.line.number, no.of.lines.to.read ))
+uniprot.xml.docs <- extractSingleProteinTags( do.call( 'paste',
+  extractChunksWithCompleteProteinTags(
+    trailing.args[[1]], start.line.number, no.of.lines.to.read )
+  ))
 print( uniprot.xml.docs )
 
 # Start computation in parallel

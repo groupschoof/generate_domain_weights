@@ -31,6 +31,7 @@
       <lcn start="8" end="299" score="1.4E-23" />
     </match>
     <match id="G3DSA:3.40.50.300" name="G3DSA:3.40.50.300" dbname="GENE3D" status="T" evd="HMMPfam">
+    <match id="G3DSA:3.40.50.300" name="G3DSA:3.40.50.300" dbname="GENE3D" status="T" evd="HMMPfam">
       <lcn start="345" end="562" score="1.0999999999999872E-54" />
     </match>
     <match id="PF00005" name="ABC_tran" dbname="PFAM" status="T" evd="HMMPfam">
@@ -71,40 +72,39 @@
       <lcn start="4" end="303" score="2.1000000000000036E-51" />
     </match>
     <match id="G3DSA:3.40.50.300" name="G3DSA:3.40.50.300" dbname="GENE3D" status="T" evd="HMMPfam">
-      <match id="G3DSA:3.40.50.300" name="G3DSA:3.40.50.300" dbname="GENE3D" status="T" evd="HMMPfam">
-        <lcn start="324" end="553" score="8.70000000000003E-62" />
-      </match>
-      <match id="PF00005" name="ABC_tran" dbname="PFAM" status="T" evd="HMMPfam">
-        <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
-        <lcn start="364" end="489" score="6.3000000000000046E-15" />
-      </match>
-      <match id="PF00664" name="ABC_membrane" dbname="PFAM" status="T" evd="HMMPfam">
-        <ipr id="IPR001140" name="ABC transporter, transmembrane domain" type="Domain" parent_id="IPR017940" />
-        <lcn start="9" end="279" score="1.6000000000000008E-23" />
-      </match>
-      <match id="PS50893" name="ABC_TRANSPORTER_2" dbname="PROFILE" status="T" evd="PrfScan">
-        <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
-        <lcn start="324" end="558" score="0.0" />
-      </match>
-      <match id="PS50929" name="ABC_TM1F" dbname="PROFILE" status="T" evd="PrfScan">
-        <ipr id="IPR017940" name="ABC transporter, integral membrane type 1" type="Domain" parent_id="IPR011527" />
-        <lcn start="17" end="291" score="0.0" />
-      </match>
-      <match id="PTHR24223" name="PTHR24223" dbname="PANTHER" status="T" evd="HMMPfam">
-        <lcn start="4" end="563" score="0.0" />
-      </match>
-      <match id="PTHR24223:SF116" name="PTHR24223:SF116" dbname="PANTHER" status="T" evd="HMMPfam">
-        <lcn start="4" end="563" score="0.0" />
-      </match>
-      <match id="SM00382" name="AAA" dbname="SMART" status="T" evd="Smart scan">
-        <ipr id="IPR003593" name="AAA+ ATPase domain" type="Domain" />
-        <lcn start="349" end="535" score="1.8000014928719636E-12" />
-      </match>
-      <match id="SSF52540" name="SSF52540" dbname="SSF" status="T" evd="HMMPfam">
-        <lcn start="324" end="541" score="8.399980140249808E-60" />
-      </match>
-      <match id="SSF90123" name="ABC_TM_1" dbname="SSF" status="T" evd="HMMPfam">
-        <ipr id="IPR011527" name="ABC transporter, transmembrane domain, type 1" type="Domain" />
-        <lcn start="1" end="301" score="4.399990012377245E-55" />
-      </match>
-  </protein> </interpromatch>
+      <lcn start="324" end="553" score="8.70000000000003E-62" />
+    </match>
+    <match id="PF00005" name="ABC_tran" dbname="PFAM" status="T" evd="HMMPfam">
+      <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
+      <lcn start="364" end="489" score="6.3000000000000046E-15" />
+    </match>
+    <match id="PF00664" name="ABC_membrane" dbname="PFAM" status="T" evd="HMMPfam">
+      <ipr id="IPR001140" name="ABC transporter, transmembrane domain" type="Domain" parent_id="IPR017940" />
+      <lcn start="9" end="279" score="1.6000000000000008E-23" />
+    </match>
+    <match id="PS50893" name="ABC_TRANSPORTER_2" dbname="PROFILE" status="T" evd="PrfScan">
+      <ipr id="IPR003439" name="ABC transporter-like" type="Domain" parent_id="IPR003593" />
+      <lcn start="324" end="558" score="0.0" />
+    </match>
+    <match id="PS50929" name="ABC_TM1F" dbname="PROFILE" status="T" evd="PrfScan">
+      <ipr id="IPR017940" name="ABC transporter, integral membrane type 1" type="Domain" parent_id="IPR011527" />
+      <lcn start="17" end="291" score="0.0" />
+    </match>
+    <match id="PTHR24223" name="PTHR24223" dbname="PANTHER" status="T" evd="HMMPfam">
+      <lcn start="4" end="563" score="0.0" />
+    </match>
+    <match id="PTHR24223:SF116" name="PTHR24223:SF116" dbname="PANTHER" status="T" evd="HMMPfam">
+      <lcn start="4" end="563" score="0.0" />
+    </match>
+    <match id="SM00382" name="AAA" dbname="SMART" status="T" evd="Smart scan">
+      <ipr id="IPR003593" name="AAA+ ATPase domain" type="Domain" />
+      <lcn start="349" end="535" score="1.8000014928719636E-12" />
+    </match>
+    <match id="SSF52540" name="SSF52540" dbname="SSF" status="T" evd="HMMPfam">
+      <lcn start="324" end="541" score="8.399980140249808E-60" />
+    </match>
+    <match id="SSF90123" name="ABC_TM_1" dbname="SSF" status="T" evd="HMMPfam">
+      <ipr id="IPR011527" name="ABC transporter, transmembrane domain, type 1" type="Domain" />
+      <lcn start="1" end="301" score="4.399990012377245E-55" />
+    </match>
+</protein> </interpromatch>

@@ -51,19 +51,19 @@ checkEquals( extr.lines,
 print("Testing extractSingleProteinTags(...)")
 uni.ipr.scn.path.2 <- project.file.path( "test", "testUniprotInterProCompleteMatchFile_2.xml" )
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 20 ) ) )
-print( extr.lines.2 )
 extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
-print( extr.xml.txt.2 )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
+checkEquals( length( extr.xml.txt.2 ), 1 ) 
 
+# End Tag on Same Line as Start Tag and just read until that very line: Also
+# one mal formed match tag in first protein:
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 70 ) ) )
-print( extr.lines.2 )
 extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
-print( extr.xml.txt.2 )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
-# Test xmlUniprotInterProMatchProteinNodes
-print("Testing xmlUniprotInterProMatchProteinNodes(...)")
-checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 2 )
-# A single protein tag:
-extr.lines <- extractChunksWithCompleteProteinTags( uni.ipr.scn.path, 42, 30 )
-checkEquals( length( xmlUniprotInterProMatchProteinNodes(extr.lines) ), 1 )
+checkEquals( length( extr.xml.txt.2 ), 1 ) 
+
+# Whole document has two valid proteins
+extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 71 ) ) )
+extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+checkTrue( ! is.null( extr.xml.txt.2 ) )
+checkEquals( length( extr.xml.txt.2 ), 2 ) 

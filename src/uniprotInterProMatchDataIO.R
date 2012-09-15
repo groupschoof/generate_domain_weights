@@ -49,7 +49,8 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
 
 extractSingleProteinTags <- function( txt,
   prot.start.tag.regex="<protein",
-  prot.end.tag.regex="</protein" ) {
+  prot.end.tag.regex="</protein",
+  noverbose=T) {
   # Constructs a character vector with all protein tag entries found in
   # argument 'txt'. Each protein tag will be a single entry. Preceeding
   # and trailing 'junk' will be discarded. 
@@ -60,54 +61,51 @@ extractSingleProteinTags <- function( txt,
   #  prot.start.tag.regex : The regular expression used to find protein
   #                         start tags.
   #
-  #  prot.end.tag.regex : The regular expression used to find protein
-  #                       end tags.
+  #  prot.end.tag.regex : The regular expression used to find protein end tags.
+  #                       (NOTE: Match will be one character longer than the
+  #                       regular expression itself: 
+  #                       So '</protein>' not '</protein' !)
   #
   # Returns: A character vector of all found protein tags or NULL.
 
+  # Only process valid input:
   if ( is.null(txt) || is.na(txt) || length(txt) == 0 )
     return(NULL)
 
+  # Look for a protein begin tag:
   prot.beg.ind <- regexpr(prot.start.tag.regex, txt)[[1]]
-  print( prot.beg.ind )
 
-  # RETURN:
+  # CASE: No complete Protein Tag within this text chunk:
   if ( prot.beg.ind < 0 ) {
-    # CASE: No complete Protein Tag within this text chunk:
-    NULL
-  } else {
-    # CASE: Found an opening Protein Tag, so cut off preceeding 'junk' until
-    # first protein tag
-    rest.txt <- substr( txt, prot.beg.ind, nchar(txt) )
-    # Find index of first closing protein tag. Specifically its last char's
-    # index.
-    prot.end.match <- regexpr(prot.end.tag.regex, rest.txt)
-    # No closing protein tag is an error, because function
-    # 'extractChunksWithCompleteProteinTags' should not return a text chunk with
-    # an opening protein tag but without a closing one.
-    if (prot.end.match[[1]] < 0) {
-      stop("Had a text chunk with an opening but no closing protein tag.")
-    }
-    prot.end.ind <- prot.end.match[[1]] + attr(prot.end.match, 'match.length')
+    return(NULL)
+  } 
 
-    prot.xml.txt <- substr( rest.txt, 1, prot.end.ind )
-    if ( prot.end.ind < nchar(rest.txt) ) {
-      # CASE: More text to parse
-      rslt <- c( prot.xml.txt, 
-        extractSingleProteinTags(substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt) )))
-      # But only return non null entries:
-      rslt[ ! is.null(rslt[]) ]
-    } else {
-      # CASE: Just the protein tag, already found
-      prot.xml.txt
-    }
+  # CASE: Found an opening Protein Tag, so cut off preceeding 'junk' until
+  # first protein tag
+  rest.txt <- substr( txt, prot.beg.ind, nchar(txt) )
+  # Find index of first closing protein tag. Specifically its last char's
+  # index.
+  prot.end.match <- regexpr(prot.end.tag.regex, rest.txt)
+  # No closing protein tag means dealing with a chunk, where the protein end
+  # tag is on the same line as the start tag. (The next chunk of text will be
+  # dealing with this.)
+  if (prot.end.match[[1]] < 0) {
+    return(NULL)
+  }
+  prot.end.ind <- prot.end.match[[1]] + attr(prot.end.match, 'match.length')
+
+  # Extract complete Protein Tag and parse this XML:
+  parse.res <- try( xmlInternalTreeParse(
+      substr( rest.txt, 1, prot.end.ind )),
+    silent=noverbose )
+  prot.xml.txt <- if ( identical( class(parse.res), 'try-error' ) ) NULL else parse.res
+
+  if ( prot.end.ind < nchar(rest.txt) ) {
+    # CASE: More text to parse
+    c( prot.xml.txt, 
+      extractSingleProteinTags(substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt) )))
+  } else {
+    # CASE: Just the protein tag, already found
+    prot.xml.txt
   }
 }
-
-xmlUniprotInterProMatchProteinNodes <- function( xml.lines, protein.xpath="//protein" ) {
-  xml.inp <- xmlInternalTreeParse( do.call( 'paste',
-      as.list( c( "<dummyEncloseContentInSingleTag>",
-          xml.lines, "</dummyEncloseContentInSingleTag>" ))))
-  getNodeSet( xml.inp, protein.xpath )
-}
-
