@@ -28,6 +28,9 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
   prot.start.tag.regex="<protein",
   prot.end.tag.regex="</protein",
   append.lines=400) {
+  # First line number is always 1, never less:
+  if( start.line.no < 1 )
+    start.line.no <- 1
 
   lines.chunk <- readSegment(path.to.file, start.line.no, read.lines)
   beg.ind <- which(grepl(prot.start.tag.regex, lines.chunk, fixed=T))

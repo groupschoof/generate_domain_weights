@@ -1,4 +1,6 @@
 library(tools)
+library(parallel)
+
 # In R sourcing other files is not trivial, unfortunately.
 # WARNING:
 # This method ONLY works for project files in depth one sub dirs!
@@ -51,20 +53,33 @@ if ( identical(class(try.res), 'try-error') )
   stop("Could not connect to redis server")
 
 # Function to be invoked with every parsed protein tag:              
+uniprot.xml.docs <- c()
 epf <- function(d) {
-  # Parse and compute domain weights
-  computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
+  uniprot.xml.docs <<- append( uniprot.xml.docs, d )
 }
 
 # Read data.
-uniprot.xml.docs <- extractSingleProteinTags(
+extractSingleProteinTags( 
   do.call( 'paste', as.list( extractChunksWithCompleteProteinTags(
-    trailing.args[[1]], start.line.number, no.of.lines.to.read ))),
+    trailing.args[[1]], start.line.number, no.of.lines.to.read))),
   each.prot.function=epf
 )
 
-# Clean up, boy:
-redisClose()
+# Start computation in parallel
+rslt <- mclapply( uniprot.xml.docs, function(d) {
+    # Connect to redis
+    try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
+    if ( identical(class(try.res), 'try-error') )
+      stop("Could not connect to redis server")
+    
+    # Parse and compute domain weights
+    computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
+    
+    # Clean up, boy:
+    redisClose()
+  },
+  mc.preschedule=T, mc.cores=detectCores()
+)
 
 # DONE
 print("DONE")
