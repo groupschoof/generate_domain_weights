@@ -42,7 +42,7 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
     } else {
       # Read into next chunk up to the first protein end tag
       c( lines.chunk[ min(beg.ind) : length(lines.chunk) ], 
-        appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines ),
+        appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines + 1 ),
           append.lines, prot.end.tag.regex ) )
     }
   }
@@ -51,7 +51,7 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
 extractSingleProteinTags <- function( txt,
   prot.start.tag.regex="<protein",
   prot.end.tag.regex="</protein",
-  noverbose=T) {
+  noverbose=F) {
   # Constructs a character vector with all protein tag entries found in
   # argument 'txt'. Each protein tag will be a single entry. Preceeding
   # and trailing 'junk' will be discarded. 
@@ -99,7 +99,12 @@ extractSingleProteinTags <- function( txt,
   parse.res <- try( xmlInternalTreeParse(
       substr( rest.txt, 1, prot.end.ind )),
     silent=noverbose )
-  prot.xml.txt <- if ( identical( class(parse.res), 'try-error' ) ) NULL else parse.res
+  prot.xml.txt <- if ( identical( class(parse.res), 'try-error' ) ) {
+    print( paste("XML parsing of the following TXT-Chunk caused an error:", txt, sep="\n") ) 
+    NULL
+  } else {
+    parse.res
+  }
 
   if ( prot.end.ind < nchar(rest.txt) ) {
     # CASE: More text to parse
