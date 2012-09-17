@@ -42,7 +42,7 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
     } else {
       # Read into next chunk up to the first protein end tag
       c( lines.chunk[ min(beg.ind) : length(lines.chunk) ], 
-        appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines + 1 ),
+        appendSegmentTillProteinEndTag( path.to.file, ( start.line.no + read.lines ),
           append.lines, prot.end.tag.regex ) )
     }
   }
@@ -51,7 +51,8 @@ extractChunksWithCompleteProteinTags <- function(path.to.file,
 extractSingleProteinTags <- function( txt,
   prot.start.tag.regex="<protein",
   prot.end.tag.regex="</protein",
-  noverbose=F) {
+  noverbose=T,
+  each.prot.function) {
   # Constructs a character vector with all protein tag entries found in
   # argument 'txt'. Each protein tag will be a single entry. Preceeding
   # and trailing 'junk' will be discarded. 
@@ -67,7 +68,14 @@ extractSingleProteinTags <- function( txt,
   #                       regular expression itself: 
   #                       So '</protein>' not '</protein' !)
   #
+  #  noverbose : Defines level of logging warnings and errors. If true all try
+  #              statements are executed in silent mode.
+  #
+  #  each.prot.function : A function to be invoked with each generated protein
+  #                       tag as argument. This argument is the result of xmlInternalTreeParse.
+  #
   # Returns: A character vector of all found protein tags or NULL.
+  #
 
   # Only process valid input:
   if ( is.null(txt) || is.na(txt) || length(txt) == 0 )
@@ -99,19 +107,26 @@ extractSingleProteinTags <- function( txt,
   parse.res <- try( xmlInternalTreeParse(
       substr( rest.txt, 1, prot.end.ind )),
     silent=noverbose )
-  prot.xml.txt <- if ( identical( class(parse.res), 'try-error' ) ) {
-    print( paste("XML parsing of the following TXT-Chunk caused an error:", txt, sep="\n") ) 
-    NULL
-  } else {
-    parse.res
+
+  # If an error occurred log the txt chunk that caused it.
+  if ( identical( class(parse.res), 'try-error' ) ) {
+    parse.res[1] <- paste(parse.res[1], "TXT-Chunk that caused the error:", txt, sep="\n") 
   }
 
+  # Invoke arbitrary function with parsed protein tag:
+  each.prot.function( parse.res )
+
+  # Is there more to parse and process?
   if ( prot.end.ind < nchar(rest.txt) ) {
-    # CASE: More text to parse
-    c( prot.xml.txt, 
-      extractSingleProteinTags(substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt) )))
-  } else {
-    # CASE: Just the protein tag, already found
-    prot.xml.txt
+      extractSingleProteinTags(
+        substr( rest.txt, (prot.end.ind + 1), nchar(rest.txt)),
+        prot.start.tag.regex,
+        prot.end.tag.regex,
+        noverbose,
+        each.prot.function
+        )
   }
+
+  # Return
+  NULL
 }

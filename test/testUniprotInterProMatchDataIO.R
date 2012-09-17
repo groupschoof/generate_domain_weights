@@ -49,21 +49,31 @@ checkEquals( extr.lines,
 
 # Test extractSingleProteinTags
 print("Testing extractSingleProteinTags(...)")
+extr.xml.txt.2 <- c()
+epf <- function(p) {
+  if ( ! identical( class(p), 'try-error' ) )
+    extr.xml.txt.2 <<- append(extr.xml.txt.2, p)
+}
 uni.ipr.scn.path.2 <- project.file.path( "test", "testUniprotInterProCompleteMatchFile_2.xml" )
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 20 ) ) )
-extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+extractSingleProteinTags( extr.lines.2, each.prot.function=epf )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
 checkEquals( length( extr.xml.txt.2 ), 1 ) 
 
 # End Tag on Same Line as Start Tag and just read until that very line: Also
 # one mal formed match tag in first protein:
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 70 ) ) )
-extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+extr.xml.txt.2 <- c()
+extractSingleProteinTags( extr.lines.2, each.prot.function=epf )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
 checkEquals( length( extr.xml.txt.2 ), 1 ) 
+# # Second entry must be a try-error:
+# print(class(  extr.xml.txt.2[[2]] ) )
+# checkEquals( class( extr.xml.txt.2[[2]] ), 'try-error' )
 
 # Whole document has two valid proteins
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 71 ) ) )
-extr.xml.txt.2 <- extractSingleProteinTags( extr.lines.2 )
+extr.xml.txt.2 <- c()
+extractSingleProteinTags( extr.lines.2, each.prot.function=epf )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
 checkEquals( length( extr.xml.txt.2 ), 2 ) 
