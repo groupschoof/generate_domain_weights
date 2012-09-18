@@ -68,10 +68,9 @@ extractSingleProteinTags( extr.lines.2, each.prot.function=epf )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
 checkEquals( length( extr.xml.txt.2 ), 1 ) 
 # # Second entry must be a try-error:
-# print(class(  extr.xml.txt.2[[2]] ) )
 # checkEquals( class( extr.xml.txt.2[[2]] ), 'try-error' )
 
-# Whole document has two valid proteins
+# Document excluding last entry has two valid proteins
 extr.lines.2 <- do.call( 'paste', as.list( extractChunksWithCompleteProteinTags( uni.ipr.scn.path.2, 1, 71 ) ) )
 extr.xml.txt.2 <- c()
 extractSingleProteinTags( extr.lines.2, each.prot.function=epf )

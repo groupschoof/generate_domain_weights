@@ -107,4 +107,6 @@
       <ipr id="IPR011527" name="ABC transporter, transmembrane domain, type 1" type="Domain" />
       <lcn start="1" end="301" score="4.399990012377245E-55" />
     </match>
-</protein> </interpromatch>
+</protein>
+<protein id="A0A696" name="A0A696_9ACTO" length="564" crc64="B41A3E92A6CB830E"></protein>
+</interpromatch>

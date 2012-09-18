@@ -20,6 +20,7 @@ src.project.file('src','uniprotInterProMatchDataIO.R')
 
 # Print out Usage:
 print( paste("Usage: Rscript",
+    "--max-ppsize=500000",
     "computeInterProDomainWeights.R", 
     "path/to/match_complete.xml",
     "start.line.number",
@@ -47,6 +48,9 @@ redis.port <- if ( length(trailing.args) == 5 ) {
                 6379
               }
 
+# We need to enable large recursions:
+options( expressions=500000 )
+
 # Function to be invoked with every parsed protein tag:              
 uniprot.xml.docs <- c()
 epf <- function(d) {
@@ -59,6 +63,9 @@ extractSingleProteinTags(
     trailing.args[[1]], start.line.number, no.of.lines.to.read))),
   each.prot.function=epf
 )
+
+# Log Message
+print( paste("Parsing", length(uniprot.xml.docs), "Protein-Tags") )
 
 # Start computation in parallel
 rslt <- mclapply( uniprot.xml.docs, function(d) {
