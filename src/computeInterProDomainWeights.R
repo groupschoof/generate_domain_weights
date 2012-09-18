@@ -47,11 +47,6 @@ redis.port <- if ( length(trailing.args) == 5 ) {
                 6379
               }
 
-# Connect to redis
-try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
-if ( identical(class(try.res), 'try-error') )
-  stop("Could not connect to redis server")
-
 # Function to be invoked with every parsed protein tag:              
 uniprot.xml.docs <- c()
 epf <- function(d) {
