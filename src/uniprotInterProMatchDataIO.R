@@ -10,6 +10,10 @@ readSegment <- function(path.to.file,
 appendSegmentTillProteinEndTag <- function(path.to.file,
   start.line.no, read.lines, prot.end.tag.regex="</protein") {
 
+  # Debug:
+  print(paste("called appendSegmentTillProteinEndTag", 
+      "start.line.no=",start.line.no,"read.lines=",read.lines,"prot.end.tag.regex=",prot.end.tag.regex))
+
   lines.chunk <- readSegment( path.to.file, start.line.no, read.lines )
   end.ind <- which(grepl(prot.end.tag.regex, lines.chunk, fixed=T))
 
