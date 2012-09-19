@@ -76,3 +76,39 @@ extr.xml.txt.2 <- c()
 extractSingleProteinTags( extr.lines.2, each.prot.function=epf )
 checkTrue( ! is.null( extr.xml.txt.2 ) )
 checkEquals( length( extr.xml.txt.2 ), 2 ) 
+
+# Test using splits:
+split.A.path <- project.file.path( "test", "splitA" )
+split.list.path <- project.file.path( "test", "splitList" )
+extr.lines.2 <- do.call( 'paste',
+  as.list( extractChunksWithCompleteProteinTags(
+    split.A.path, split.list.path,
+    readChunkFunc=readSplit, 
+    appendChunkFunc=appendSplitTillProteinEndTag(
+      split.A.path, split.list.path)
+    )
+  )
+)
+extr.xml.txt.2 <- c()
+extractSingleProteinTags( extr.lines.2,
+  each.prot.function=epf )
+checkTrue( ! is.null( extr.xml.txt.2 ) )
+# Only a single valid protein in this chunk:
+checkEquals( length( extr.xml.txt.2 ), 1 ) 
+
+split.B.path <- project.file.path( "test", "splitB" )
+extr.lines.2 <- do.call( 'paste',
+  as.list( extractChunksWithCompleteProteinTags(
+    split.B.path, split.list.path,
+    readChunkFunc=readSplit, 
+    appendChunkFunc=appendSplitTillProteinEndTag(
+      split.A.path, split.list.path)
+    )
+  )
+)
+extr.xml.txt.2 <- c()
+extractSingleProteinTags( extr.lines.2,
+  each.prot.function=epf )
+checkTrue( ! is.null( extr.xml.txt.2 ) )
+# Two valid protein in this chunk:
+checkEquals( length( extr.xml.txt.2 ), 2 ) 

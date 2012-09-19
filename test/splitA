@@ -1,0 +1,29 @@
+</release><protein id="A0A000" name="A0A000_9ACTO" length="394" crc64="F1DD0C1042811B48">
+<match id="G3DSA:3.40.640.10" name="PyrdxlP-dep_Trfase_major_sub1" dbname="GENE3D" status="T" evd="HMMPfam">
+  <ipr id="IPR015421" name="Pyridoxal phosphate-dependent transferase, major region, subdomain 1" type="Domain" />
+  <lcn start="55" end="271" score="1.6000000000000194E-82" />
+</match>
+<match id="G3DSA:3.90.1150.10" name="PyrdxlP-dep_Trfase_major_sub2" dbname="GENE3D" status="T" evd="HMMPfam">
+  <ipr id="IPR015422" name="Pyridoxal phosphate-dependent transferase, major region, subdomain 2" type="Domain" />
+  <lcn start="272" end="388" score="5.3000000000000115E-53" />
+</match>
+<match id="PF00155" name="Aminotran_1_2" dbname="PFAM" status="T" evd="HMMPfam">
+  <ipr id="IPR004839" name="Aminotransferase, class I/classII" type="Domain" parent_id="IPR015424" />
+  <lcn start="41" end="381" score="4.300000000000034E-61" />
+</match>
+<match id="PTHR13693" name="PTHR13693" dbname="PANTHER" status="T" evd="HMMPfam">
+  <lcn start="16" end="389" score="0.0" />
+</match>
+<match id="PTHR13693:SF7" name="PTHR13693:SF7" dbname="PANTHER" status="T" evd="HMMPfam">
+  <lcn start="16" end="389" score="0.0" />
+</match>
+<match id="SSF53383" name="PyrdxlP-dep_Trfase_major" dbname="SSF" status="T" evd="HMMPfam">
+  <ipr id="IPR015424" name="Pyridoxal phosphate-dependent transferase, major domain" type="Domain" />
+  <lcn start="9" end="392" score="6.100026561498381E-99" />
+</match>
+<match id="TIGR01821" name="5aminolev_synth" dbname="TIGRFAMs" status="T" evd="HMMPfam">
+  <ipr id="IPR010961" name="Tetrapyrrole biosynthesis, 5-aminolevulinic acid synthase" type="Domain" parent_id="IPR004839" />
+  <lcn start="12" end="391" score="0.0" />
+</match>
+  </protein>
+  <protein id="A0A001" name="A0A001_9ACTO" length="591" crc64="4F6121D422B63694">
