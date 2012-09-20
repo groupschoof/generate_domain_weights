@@ -92,7 +92,7 @@ rslt <- unlist(
 
 # Feed result data into redis in a single transaction:
 redisMulti()
-lapply( rslt, eval )
+not.printed.result <- lapply( rslt, eval )
 redisExec()
 
 # Clean up, boy:
