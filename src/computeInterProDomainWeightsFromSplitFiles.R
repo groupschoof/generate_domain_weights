@@ -1,5 +1,4 @@
 library(tools)
-library(parallel)
 
 # In R sourcing other files is not trivial, unfortunately.
 # WARNING:
@@ -47,6 +46,11 @@ redis.port <- if ( length(trailing.args) == 4 ) {
 # We need to enable large recursions:
 options( expressions=500000 )
 
+# Connect to redis
+try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
+if ( identical(class(try.res), 'try-error') )
+  stop("Could not connect to redis server")
+
 # Function to be invoked with every parsed protein tag:              
 uniprot.xml.docs <- c()
 epf <- function(d) {
@@ -72,21 +76,27 @@ extractSingleProteinTags(
 # Log Message
 print( paste("Parsing", length(uniprot.xml.docs), "Protein-Tags") )
 
-# Start computation in parallel
-rslt <- mclapply( uniprot.xml.docs, function(d) {
-    # Connect to redis
-    try.res <- try( redisConnect( host=redis.host, port=redis.port ) )
-    if ( identical(class(try.res), 'try-error') )
-      stop("Could not connect to redis server")
-    
-    # Parse and compute domain weights
-    computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
-    
-    # Clean up, boy:
-    redisClose()
-  },
-  mc.preschedule=T, mc.cores=detectCores()
+# Start computation:
+rslt <- unlist(
+  lapply( uniprot.xml.docs,
+    function(d) {
+      # Parse and compute domain weights
+      computeInterProDomainWeights( parseUniprotIprMatchDocument(d) )
+    }
+  ),
+  use.names=F
 )
+
+# Debug:
+# print(rslt)
+
+# Feed result data into redis in a single transaction:
+redisMulti()
+lapply( rslt, eval )
+redisExec()
+
+# Clean up, boy:
+redisClose()
 
 # DONE
 print("DONE")

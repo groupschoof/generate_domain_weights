@@ -46,7 +46,7 @@ checkEquals(xmlGetAttr(prt.rslt, 'id'), 'A0A000')
 fake <- getProtein(
   xmlInternalTreeParse("<tag id='my.tag'>Content</tag>"))
 checkTrue(is.null(fake))
-checkEquals( redisSPop("errors"),
+checkEquals( redisLPop("errors"),
   "Error: Document '<?xml version=\"1.0\"?>\n<tag id=\"my.tag\">Content</tag>\n ' did not contain a protein tag.")
 
 # Test getIprScnMatches
@@ -120,36 +120,45 @@ checkEquals( rownames(parse.rslt), inter.pro.accessions )
 # Assure NULL is returned and a try-error is logged, when a malformed
 # XML document is attempted to be parsed:
 parse.error <- parseUniprotIprMatchDocument( try(xmlInternalTreeParse("Foo Bar Baz"), silent=T) )
-checkTrue( grepl('^Error', redisSPop("errors"), perl=T))
+checkTrue( grepl('^Error', redisLPop("errors"), perl=T))
 checkTrue( is.null(parse.error) )
+# Assure that multiple neighbors on one side are recognized:
+print( "Testing parseUniprotIprMatchDocument(...) for multiple start neighbors of 'IPR015424'" )
+parse.mult.ngbs <- parseUniprotIprMatchDocument( exmpl.doc.3 )
+checkEquals( class(parse.mult.ngbs), 'matrix')
+checkEquals( nrow(parse.mult.ngbs), 3)
+checkEquals( ncol(parse.mult.ngbs), 2)
+checkEquals( colnames(parse.mult.ngbs), c('start', 'end'))
+checkEquals( rownames(parse.mult.ngbs), c('IPR000666','IPR000999','IPR015424') )
+checkEquals( length( parse.mult.ngbs[['IPR015424','start']] ), 2 )
 
 # Test computeInterProDomainWeights
 print("Testing computeInterProDomainWeights(...)")
-computeInterProDomainWeights(parse.rslt)
+not.printed.result <- lapply(computeInterProDomainWeights(parse.rslt), eval)
 checkEquals( redisSCard('interpro_domain_ids'), length(inter.pro.accessions) )
 checkEquals( redisGet('IPR015422_cnt'), '1' )
 checkEquals( redisSCard('IPR015422_nghbrs'), 2 )
-computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.2) )
+not.printed.result <- lapply(computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.2) ), eval)
 checkEquals( redisSCard('interpro_domain_ids'), length(inter.pro.accessions) + 1 )
 checkEquals( redisGet('IPR015424_cnt'), '2' )
 # And after computing another document, in which 'IPR015424' has TWO 'start'
 # neighbors and no 'end' neighbors:
 redisFlushAll()
-computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.3) )
+not.printed.result <- lapply( computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.3) ), eval )
 checkEquals( redisSCard('IPR015424_nghbrs'), 2 )
 rks <- length( redisKeys() )
 # Document with no valid InterPro Domains:
-computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.4) )
+not.printed.result <- lapply(computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.4) ), eval)
 checkEquals( length( redisKeys() ), rks )
 # Document with only a single annotated InterPro Domain
-computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) )
+not.printed.result <- lapply(computeInterProDomainWeights( parseUniprotIprMatchDocument(exmpl.doc.5) ), eval)
 checkEquals( redisSCard('interpro_domain_ids'), 4 )
 checkEquals( redisSCard('IPR000001_nghbrs'), 0 )
 
 # Test logError
 print("Testing logError(...)")
 logError("Foo Bar Baz")
-checkEquals(redisSPop("errors"), 'Foo Bar Baz')
+checkEquals(redisLPop("errors"), 'Foo Bar Baz')
 
 # Clean up, girl:
 redisFlushAll()
