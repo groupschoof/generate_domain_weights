@@ -2,8 +2,33 @@ h1. generate domain weights
 
 Lee, Byungwook, and Doheon Lee developed a similarity measure for protein domain architectures. This is based on precomputed 'domain weights'. The 'generate_domain_weights' tool computes these domain weights for all InterPro annotations in UniprotKB in parallel using R and redis. 
 
+h2. Usage
+
+There are two Rscripts in the src folder that can be used to parse the large 'match_complete.xml' file as downloadable from Uniprot. 
+The two different approaches implemented are reading in 10,000 lines of the above file and parsing them or pre splitting 'match_complete.xml' into files of 10,000 lines and parsing those. The latter approach is a little faster but requires moe disk space and a *nix system with the @split@ command.
+
+h3. Parsing-Guide
+
+1. Download the database of all InterProScan results for all proteins in UniprotKB. (See references for the link.)
+2. Split the above database into files of max 10,000 lines each using the *nix shell command @split@.
+3. Generate a sorted list of above split results, e.g. using @l -1 split_files_fir > sorted_split_files_list.txt@
+4. On your cluster start a redis server (see references for details)
+5. Submit a job to your compute cluster for each split file: <pre>Rscript src/computeInterProDomainWeightsFromSplitFiles.R <curr_split_file> sorted_split_list.txt url.to.your.redis your.redis.port</pre>
+
+Alternativly you may not split the large database but make R itself process different all the chunks each 10,000 lines long. In this case leave out above steps 2. and 3. and start for each chunk of 10,000 lines a single batch job (step 5.):
+( First compute CHUNK_NO as number of lines in database divided by 10,000 and rounded up! )
+<pre>for i in {1..CHUNK_NO}; do
+  l=`echo "(" $i - 1 ")" "*" 10000 | bc`
+  Rscript src/computeInterProDomainWeights.R match_complete.xml ${l} 10000 url.to.your.redis your.redis.port
+done;</pre>
+Note, that the latter version of step 5. is slower than the one working on split files.
+
+Finally gather the generated data into a single table of domain weights:
+_ToDo_
+
 h2. References
 
 1. Lee, Byungwook, and Doheon Lee. “Protein Comparison at the Domain Architecture Level.” BMC Bioinformatics 10, no. Suppl 15 (December 3, 2009): S5.
 2. http://redis.io/
 3. http://cran.r-project.org/web/packages/rredis/index.html
+4. InterProScan results for all proteins in UniprotKB: ftp://ftp.ebi.ac.uk/pub/databases/interpro/match_complete.xml.gz (last accessed September 2012)
