@@ -5,7 +5,7 @@ Lee, Byungwook, and Doheon Lee developed a similarity measure for protein domain
 h2. Usage
 
 There are two Rscripts in the src folder that can be used to parse the large 'match_complete.xml' file as downloadable from Uniprot. 
-The two different approaches implemented are reading in 10,000 lines of the above file and parsing them or pre splitting 'match_complete.xml' into files of 10,000 lines and parsing those. The latter approach is a little faster but requires moe disk space and a *nix system with the @split@ command.
+The two different approaches implemented are (1) parsing chunks of 10,000 lines of the above file in parallel or pre splitting 'match_complete.xml' into files of 10,000 lines and process those also in parallel. The latter approach is a little faster but requires more disk space and a *nix system with the @split@ command.
 
 h3. Parsing-Guide
 
@@ -23,8 +23,12 @@ Alternativly you may not split the large database but make R itself process diff
 done;</pre>
 Note, that the latter version of step 5. is slower than the one working on split files.
 
-Finally gather the generated data into a single table of domain weights:
-_ToDo_
+h3. Generate output
+
+The above approach stores the number of annotations and the number of distinct direct neighbor domains for all annotated InterPro domains. These values are kept in the redis instance accessed by all parallel computations. _After_ all of them have finished it is thus necessary to process this information into a single 'domain weight table'.
+
+The following script does just that: 
+<pre>Rscript src/generateDomainWeightsTable.R url.to.your.redis your.redis.port path/to/domain_weights_table.tbl</pre>
 
 h2. References
 
