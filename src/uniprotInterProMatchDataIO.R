@@ -31,10 +31,14 @@ nextSplitFile <- function(path.to.curr.split,
   path.to.sorted.split.list) {
   fl.name <- basename(path.to.curr.split)
   sl <- as.character(read.table(path.to.sorted.split.list)$V1)
-  normalizePath(file.path(
-      dirname(path.to.curr.split),
-      sl[ which(sl[] == as.character(fl.name)) + 1 ]
-  ))
+  i <- which(sl[] == as.character(fl.name))
+  # Return
+  if ( i == length(sl) ) {
+    # CASE: Last file!
+    NULL
+  } else {
+    normalizePath(file.path( dirname(path.to.curr.split), sl[[ (i + 1) ]] ))
+  }
 }
 
 appendSplitTillProteinEndTag <- function(path.to.curr.split,
@@ -43,6 +47,12 @@ appendSplitTillProteinEndTag <- function(path.to.curr.split,
 
   path.to.file <- nextSplitFile( path.to.curr.split,
     path.to.sorted.split.list )
+  # '' returned as content of last file
+  if ( is.null(path.to.file) ) {
+    # CASE: Last file in split-list:
+    return('')
+  }
+
   lines.chunk <- readSplit( path.to.file )
   end.ind <- which(grepl(prot.end.tag.regex, lines.chunk, fixed=T))
 

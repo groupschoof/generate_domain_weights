@@ -102,7 +102,7 @@ extr.lines.2 <- do.call( 'paste',
     split.B.path, split.list.path,
     readChunkFunc=readSplit, 
     appendChunkFunc=appendSplitTillProteinEndTag(
-      split.A.path, split.list.path)
+      split.B.path, split.list.path)
     )
   )
 )
